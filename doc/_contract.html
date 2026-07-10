@@ -1,0 +1,16 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="contract">
+    <h2>Variables Contract (expectedVariables)</h2>
+    <p>
+        Writing complex HTML templates with Twig carries a risk: if a variable is omitted in the controller (e.g. <code>user.email</code> or an activation link), Twig will throw a rendering error or display an incomplete email in production.
+    </p>
+    <p>
+        To solve this, the <code>MailTemplate</code> entity has an <code>expectedVariables</code> field. This contract validates the context array before delivery.
+    </p>
+
+    <div class="uk-alert-danger" uk-alert>
+        <p><strong>Security check:</strong></p>
+        <p>
+            If any required variable (including dotted notations for nested structures, e.g. <code>user.firstName</code>) is missing from the <code>$context</code> parameter, the service immediately throws a <code>Callisto\CallistoMailer\Exception\MissingTemplateVariablesException</code> and aborts sending.
+        </p>
+    </div>
+</div>

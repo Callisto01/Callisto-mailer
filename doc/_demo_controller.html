@@ -1,0 +1,63 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="demo-controller">
+    <h2>Practical Case 1: Symfony Controller</h2>
+    <p>
+        Complete example showing user account creation, locale preference extraction, and calling <code>DatabaseMailerService</code> to send the confirmation email validating the JSON variables contract.
+    </p>
+
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-demo-ctrl"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-php" id="code-demo-ctrl">&lt;?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use App\Entity\User;
+use Callisto\CallistoMailer\Service\DatabaseMailerService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+class SecurityController extends AbstractController
+{
+    #[Route('/register', name: 'app_security_register', methods: ['POST'])]
+    public function register(
+        Request $request,
+        EntityManagerInterface $em,
+        DatabaseMailerService $mailer
+    ): Response {
+        $email = $request->request->get('email');
+        $firstName = $request->request->get('firstName');
+        $lastName = $request->request->get('lastName');
+        $locale = $request->getPreferredLanguage(['fr', 'en']) ?? 'en';
+
+        $user = new User();
+        $user->setEmail($email);
+        $user->setFirstName($firstName);
+        $user->setLastName($lastName);
+        $user->setLocale($locale);
+
+        $em->persist($user);
+        $em->flush();
+
+        // Send email validating the 'registration_confirmation' JSON variables contract
+        $mailer->send(
+            code: 'registration_confirmation',
+            recipient: $user->getEmail(),
+            context: [
+                'user' => [
+                    'firstName' => $user->getFirstName(),
+                    'lastName' => $user->getLastName(),
+                ],
+                'activationUrl' => 'https://app.example.com/activate?token=xyz'
+            ],
+            locale: $user->getLocale()
+        );
+
+        return $this->json(['message' => 'User created and email sent successfully.']);
+    }
+}</code></pre>
+    </div>
+</div>

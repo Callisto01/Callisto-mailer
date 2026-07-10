@@ -1,0 +1,12 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="database">
+    <h2>Database &amp; Migrations</h2>
+    <p>
+        The bundle relies on the <code>MailTemplate</code> entity. To create the corresponding <code>callisto_mail_template</code> table, generate and run the migrations:
+    </p>
+
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-db"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-bash" id="code-db">php bin/console make:migration
+php bin/console doctrine:migrations:migrate</code></pre>
+    </div>
+</div>

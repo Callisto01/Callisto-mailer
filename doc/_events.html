@@ -1,0 +1,27 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="events">
+    <h2>Events</h2>
+    <p>
+        The bundle dispatches two major events via Symfony's EventDispatcher to customize or log email activities:
+    </p>
+
+    <div class="uk-overflow-auto">
+        <table class="uk-table uk-table-striped uk-table-hover uk-table-divider">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Callisto\CallistoMailer\Event\BeforeTemplateMailSendEvent</code></td>
+                    <td>Dispatched right before sending. Allows you to modify the <code>Email</code> object (add CCs, headers) or alter the Twig context variables.</td>
+                </tr>
+                <tr>
+                    <td><code>Callisto\CallistoMailer\Event\AfterTemplateMailSendEvent</code></td>
+                    <td>Dispatched immediately after sending successfully. Useful for auditing, history logs, or analytics.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

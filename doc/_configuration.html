@@ -1,0 +1,19 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="configuration">
+    <h2>Basic Configuration</h2>
+    <p>
+        Create the configuration file in your main application at <code>config/packages/callisto_mailer.yaml</code>:
+    </p>
+
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-yaml"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-yaml" id="code-yaml"># config/packages/callisto_mailer.yaml
+callisto_mailer:
+    # Default language used if the requested translated template is missing
+    default_locale: 'en'
+    
+    # Configure available layouts
+    layouts:
+        tailwind: '@CallistoMailer/layouts/base_tailwind.html.twig'
+        bootstrap: '@CallistoMailer/layouts/base_bootstrap.html.twig'</code></pre>
+    </div>
+</div>

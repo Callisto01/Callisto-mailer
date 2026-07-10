@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletter Callisto</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f6f9fc; color: #333;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
+        <tr>
+            <td style="background-color: #1e293b; padding: 30px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 0.05em;">L'ACTU DE CALLISTO</h1>
+                <p style="color: #94a3b8; margin: 5px 0 0 0; font-size: 13px;">Newsletter mensuelle - {{ month }} 2026</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 40px; line-height: 1.6;">
+                <h2 style="color: #1e293b; font-size: 20px; margin-top: 0;">{{ article.title }}</h2>
+                <p>{{ article.summary }}</p>
+                
+                <div style="background-color: #f1f5f9; border-radius: 6px; padding: 25px; margin: 30px 0;">
+                    <h3 style="margin-top: 0; color: #0f172a; font-size: 16px;">💡 Astuce du mois</h3>
+                    <p style="margin: 0; font-size: 14px; color: #475569;">{{ tipText }}</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{{ readMoreUrl }}" style="background-color: #6366f1; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">Lire l'article complet</a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #f8fafc; padding: 30px 40px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #edf2f7;">
+                <p style="margin: 0 0 10px 0;">Vous recevez cet e-mail car vous êtes inscrit à la newsletter Callisto.</p>
+                <p style="margin: 0;"><a href="{{ unsubscribeUrl }}" style="color: #6366f1; text-decoration: underline;">Se désabonner</a></p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vous avez oublié quelque chose ?</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f6f9fc; color: #333;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
+        <tr>
+            <td style="background-color: #ec4899; padding: 40px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 26px;">Votre panier vous attend !</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 40px; line-height: 1.6;">
+                <p>Bonjour {{ user.firstName }},</p>
+                <p>Nous avons remarqué que vous avez laissé des articles dans votre panier. Ils sont réservés pour vous pendant encore quelques heures.</p>
+                <div style="background-color: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 6px; padding: 20px; margin: 20px 0; text-align: center;">
+                    <p style="margin: 0 0 10px 0; font-size: 15px;">Profitez de <strong>-10%</strong> sur votre panier avec le code promo :</p>
+                    <span style="font-size: 22px; font-weight: bold; color: #ec4899; background-color: #fff; padding: 8px 16px; border: 2px dashed #ec4899; border-radius: 4px; display: inline-block;">RETROUVAILLES10</span>
+                </div>
+                <p>Ne laissez pas passer cette opportunité !</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{{ cartUrl }}" style="background-color: #ec4899; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">Valider mon panier</a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #edf2f7;">
+                &copy; 2026 Callisto Store. Tous droits réservés.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

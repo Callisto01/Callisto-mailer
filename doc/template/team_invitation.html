@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation à rejoindre une équipe</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f6f9fc; color: #333;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
+        <tr>
+            <td style="background-color: #f97316; padding: 40px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 26px;">Rejoignez votre équipe !</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 40px; line-height: 1.6;">
+                <p>Bonjour,</p>
+                <p><strong>{{ inviter.name }}</strong> ({{ inviter.email }}) vous invite à rejoindre l'espace de travail collaboratif de l'organisation <strong>{{ organization.name }}</strong> sur Callisto.</p>
+                <p>En acceptant cette invitation, vous pourrez partager des ressources, collaborer sur des projets communs et communiquer avec les membres de l'équipe.</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{{ acceptUrl }}" style="background-color: #f97316; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">Accepter l'invitation</a>
+                </div>
+                <p>Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet e-mail.</p>
+                <p>À très vite,<br>L'équipe Callisto</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #edf2f7;">
+                &copy; 2026 Callisto. Tous droits réservés.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

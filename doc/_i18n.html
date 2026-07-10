@@ -1,0 +1,23 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="i18n">
+    <h2>Multi-language Support (i18n)</h2>
+    <p>
+        Thanks to the unique constraint on the composite key <code>['code', 'locale']</code>, you can store multiple translations for the same template code in your database.
+    </p>
+    <p>
+        Specify the locale using the <code>locale</code> parameter:
+    </p>
+
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-i18n"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-php" id="code-i18n">$databaseMailerService->send(
+    code: 'welcome_user',
+    recipient: 'john.doe@example.com',
+    context: ['user' => $user],
+    locale: 'en' // Finds template with locale 'en'
+);</code></pre>
+    </div>
+
+    <p>
+        If the requested locale is missing, the service automatically falls back to the configured <code>default_locale</code>.
+    </p>
+</div>

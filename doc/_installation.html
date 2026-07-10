@@ -1,0 +1,22 @@
+<div class="uk-card uk-card-default uk-border-rounded uk-card-body uk-margin-medium-bottom" id="installation">
+    <h2>Installation</h2>
+    <p>
+        Since the package is public, you can install it directly via Composer without declaring any custom VCS repositories:
+    </p>
+
+    <div class="code-container uk-margin-small-bottom">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-require"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-bash" id="code-require">composer require callisto/callisto-mailer</code></pre>
+    </div>
+
+    <p>If you are not using Symfony Flex, manually register the bundle in <code>config/bundles.php</code>:</p>
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-bundles"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-php" id="code-bundles">// config/bundles.php
+
+return [
+    // ...
+    Callisto\CallistoMailer\CallistoMailerBundle::class => ['all' => true],
+];</code></pre>
+    </div>
+</div>

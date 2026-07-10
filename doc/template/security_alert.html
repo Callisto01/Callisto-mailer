@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerte de sécurité</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f6f9fc; color: #333;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
+        <tr>
+            <td style="background-color: #f59e0b; padding: 40px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 26px;">Alerte de connexion</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 40px; line-height: 1.6;">
+                <p>Bonjour {{ user.firstName }},</p>
+                <p>Nous avons détecté une nouvelle connexion à votre compte Callisto :</p>
+                <div style="background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                    <p style="margin: 0 0 8px 0;">Appareil / Navigateur : <strong>{{ device }}</strong></p>
+                    <p style="margin: 0 0 8px 0;">Adresse IP : <strong>{{ ipAddress }}</strong></p>
+                    <p style="margin: 0;">Date et heure : <strong>{{ dateTime }}</strong></p>
+                </div>
+                <p>Si vous êtes à l'origine de cette connexion, aucune action n'est requise.</p>
+                <p style="color: #ef4444; font-weight: bold;">Si vous ne reconnaissez pas cette activité, veuillez sécuriser votre compte et modifier votre mot de passe immédiatement :</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{{ securityCenterUrl }}" style="background-color: #f59e0b; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">Sécuriser mon compte</a>
+                </div>
+                <p>L'équipe de Sécurité Callisto</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #edf2f7;">
+                &copy; 2026 Callisto. Tous droits réservés.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

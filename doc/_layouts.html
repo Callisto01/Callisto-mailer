@@ -1,0 +1,61 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="layouts">
+    <h2>Layouts</h2>
+    <p>
+        The package provides two high-fidelity graphic structures (layouts) ready for use:
+    </p>
+    <ul>
+        <li><code>tailwind</code>: Modern clean layout with an indigo-style button (<code>.btn-indigo</code>).</li>
+        <li><code>bootstrap</code>: Classic sober style with standard buttons (<code>.btn-primary</code>).</li>
+    </ul>
+
+    <div class="uk-alert-success" uk-alert>
+        <p><strong>Overriding Layouts:</strong></p>
+        <p>
+            To override the default designs of these layouts without altering your database entities, simply create the following templates in your main application:
+        </p>
+        <ul>
+            <li><code>templates/bundles/CallistoMailerBundle/layouts/base_tailwind.html.twig</code></li>
+            <li><code>templates/bundles/CallistoMailerBundle/layouts/base_bootstrap.html.twig</code></li>
+        </ul>
+    </div>
+
+    <div class="uk-margin-medium-top">
+        <p><strong>Visualize Demo Renderings:</strong></p>
+        <div class="uk-grid-small uk-child-width-auto" uk-grid>
+            <div>
+                <a href="#modal-demo-tailwind" uk-toggle class="uk-button uk-button-default uk-button-small">
+                    <i class="fa-solid fa-eye uk-margin-small-right"></i> Tailwind Layout Demo
+                </a>
+            </div>
+            <div>
+                <a href="#modal-demo-bootstrap" uk-toggle class="uk-button uk-button-default uk-button-small">
+                    <i class="fa-solid fa-eye uk-margin-small-right"></i> Bootstrap Layout Demo
+                </a>
+            </div>
+        </div>
+
+        <!-- Modal Tailwind -->
+        <div id="modal-demo-tailwind" class="uk-modal-container" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <button class="uk-modal-close-default" type="button" uk-close></button>
+                <h2 class="uk-modal-title">Email Render - Tailwind Layout</h2>
+                <iframe src="demo/welcome_email.html" style="width: 100%; height: 500px; border: 1px solid #e5e5e5; border-radius: 4px;"></iframe>
+                <p class="uk-text-right">
+                    <a href="demo/welcome_email.html" target="_blank" class="uk-button uk-button-primary uk-button-small">Open in a separate tab</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Modal Bootstrap -->
+        <div id="modal-demo-bootstrap" class="uk-modal-container" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <button class="uk-modal-close-default" type="button" uk-close></button>
+                <h2 class="uk-modal-title">Email Render - Bootstrap Layout</h2>
+                <iframe src="demo/reset_password_email.html" style="width: 100%; height: 500px; border: 1px solid #e5e5e5; border-radius: 4px;"></iframe>
+                <p class="uk-text-right">
+                    <a href="demo/reset_password_email.html" target="_blank" class="uk-button uk-button-primary uk-button-small">Open in a separate tab</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
