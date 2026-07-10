@@ -1,0 +1,12 @@
+{# example/templates/emails/welcome_user.html.twig #}
+{% block subject %}Bienvenue chez Callisto, {{ user.firstName }} !{% endblock %}
+{% block layout %}tailwind{% endblock %}
+{% block content %}
+    <h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Ravi de vous compter parmi nous !</h1>
+    <p>Bonjour {{ user.firstName }} {{ user.lastName }},</p>
+    <p>Votre compte a bien été créé. Vous pouvez désormais vous connecter à notre plateforme et explorer toutes nos fonctionnalités.</p>
+    <div style="margin: 32px 0; text-align: center;">
+        <a href="{{ loginUrl }}" class="btn-indigo">Accéder à mon espace</a>
+    </div>
+    <p style="font-size: 14px; color: #64748b;">Si le bouton ci-dessus ne fonctionne pas, copiez-collez ce lien : <a href="{{ loginUrl }}">{{ loginUrl }}</a></p>
+{% endblock %}

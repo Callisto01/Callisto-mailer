@@ -223,8 +223,98 @@ $rendered = $databaseMailerService->render('welcome_user', [
 
 ---
 
-## Customisation et Surcharge des layouts
-Vous pouvez facilement surcharger les layouts de base du bundle dans votre application principale en créant les fichiers correspondants dans le répertoire de templates global de votre application Symfony (sous le même namespace virtuel Twig `@CallistoMailer`) :
+## Gestion des Layouts de Base Personnalisés (Custom Layouts)
+
+Le bundle permet d'utiliser des layouts de base personnalisés en dehors de `bootstrap` et `tailwind`. Vous avez deux façons de procéder :
+
+### Option A : Déclaration Globale dans la Configuration (Recommandé)
+Vous pouvez enregistrer vos layouts personnalisés sous des alias dans la configuration Symfony de votre projet principal (ex: `config/packages/callisto_mailer.yaml`) :
+
+```yaml
+# config/packages/callisto_mailer.yaml
+callisto_mailer:
+    layouts:
+        custom_modern: 'emails/layouts/modern.html.twig'
+        custom_dark: '@App/emails/layouts/dark.html.twig'
+```
+
+Dans votre base de données (entité `MailTemplate`), vous pouvez alors simplement renseigner l'alias configuré dans le champ `layout` (ex: `custom_modern` ou `custom_dark`). Le service résoudra automatiquement le chemin du fichier correspondant.
+
+### Option B : Chemin Direct Twig en Base de Données
+Si vous ne souhaitez pas déclarer vos layouts dans la configuration, vous pouvez enregistrer directement le chemin Twig complet dans le champ `layout` de votre `MailTemplate` en base de données. 
+Le service détectera automatiquement s'il s'agit d'un chemin direct si la valeur commence par `@` ou contient `.twig` ou `/`.
+
+Exemples de valeurs valides pour le champ `layout` en base de données :
+- `@App/emails/layouts/premium.html.twig`
+- `emails/layouts/notification.html.twig`
+
+---
+
+## Surcharge des Layouts par défaut
+Si vous utilisez les layouts intégrés (`bootstrap` ou `tailwind`) mais que vous souhaitez modifier leur code HTML/CSS de base sans changer le code de vos entités, vous pouvez les surcharger dans votre application principale en créant les fichiers aux emplacements suivants :
 
 - `templates/bundles/CallistoMailerBundle/layouts/base_tailwind.html.twig`
 - `templates/bundles/CallistoMailerBundle/layouts/base_bootstrap.html.twig`
+
+---
+
+## Gestion et Administration des Templates
+
+Le service `DatabaseMailerService` expose également des méthodes utilitaires permettant d'administrer les modèles de mails (lister, créer/sauvegarder, modifier et supprimer) directement depuis votre code PHP (par exemple, dans un contrôleur d'administration ou une commande console).
+
+### 1. Lister les templates
+Vous pouvez récupérer la liste de tous les modèles d'e-mails sous forme d'entités d'objets ou de simples tableaux associatifs :
+
+```php
+// Récupère un tableau d'entités MailTemplate[]
+$templates = $databaseMailerService->listTemplates();
+
+// Récupère un tableau associatif simple (ex: pour des API JSON)
+$templatesArray = $databaseMailerService->listTemplatesAsArray();
+/*
+$templatesArray contient :
+[
+    [
+        'code' => 'welcome_user',
+        'subject' => 'Bienvenue {{ user.firstName }} !',
+        'layout' => 'tailwind',
+        'content' => '...'
+    ]
+]
+*/
+```
+
+### 2. Créer ou Mettre à Jour un template (Save)
+La méthode `saveTemplate` crée le modèle s'il n'existe pas ou le met à jour s'il existe déjà en base de données, puis applique immédiatement les modifications (flush) :
+
+```php
+$databaseMailerService->saveTemplate(
+    code: 'user_reset_password',
+    subject: 'Réinitialisez votre mot de passe',
+    content: '<p>Veuillez cliquer ici pour réinitialiser votre mot de passe...</p>',
+    layout: 'tailwind' // Optionnel, défaut: 'tailwind'
+);
+```
+
+### 3. Modifier un template existant (Update)
+Si vous souhaitez modifier des champs spécifiques d'un modèle existant :
+
+```php
+$databaseMailerService->updateTemplate('welcome_user', [
+    'subject' => 'Nouveau sujet pour le mail de bienvenue',
+    'layout' => 'bootstrap'
+]);
+```
+
+### 4. Supprimer un template
+Vous pouvez supprimer un modèle d'e-mail de la base de données grâce à son code unique :
+
+```php
+$deleted = $databaseMailerService->deleteTemplate('old_obsolete_template');
+
+if ($deleted) {
+    // Le template a été supprimé avec succès
+} else {
+    // Le template n'existait pas en base de données
+}
+```
