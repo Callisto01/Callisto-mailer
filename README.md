@@ -21,4 +21,4 @@ composer require callisto/callisto-mailer
 > ### 📖 Full Documentation & Setup Guide
 > The complete installation guide, configuration references, and advanced usage examples are available on our official documentation website.
 > 
-> 🚀 **[Read the Official Callisto Mailer Documentation](callisto01.github.io/Callisto-mailer/)**
+> 🚀 **[Read the Official Callisto Mailer Documentation](https://callisto01.github.io/Callisto-mailer/)**
