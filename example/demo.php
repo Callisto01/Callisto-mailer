@@ -33,16 +33,16 @@ $repository = $container->get(MailTemplateRepository::class);
 
 $template = new MailTemplate();
 $template->setCode('welcome_user')
-    ->setSubject('Bienvenue chez Callisto, {{ user.firstName }} !')
+    ->setSubject('Welcome to Callisto, {{ user.firstName }}!')
     ->setLayout('tailwind')
     ->setContent('
-        <h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Ravi de vous compter parmi nous !</h1>
-        <p>Bonjour {{ user.firstName }} {{ user.lastName }},</p>
-        <p>Votre compte a bien été créé. Vous pouvez désormais vous connecter à notre plateforme et explorer toutes nos fonctionnalités.</p>
+        <h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Delighted to have you with us!</h1>
+        <p>Hello {{ user.firstName }} {{ user.lastName }},</p>
+        <p>Your account has been successfully created. You can now log in to our platform and explore all our features.</p>
         <div style="margin: 32px 0; text-align: center;">
-            <a href="{{ loginUrl }}" class="btn-indigo">Accéder à mon espace</a>
+            <a href="{{ loginUrl }}" class="btn-indigo">Access my space</a>
         </div>
-        <p style="font-size: 14px; color: #64748b;">Si le bouton ci-dessus ne fonctionne pas, copiez-collez ce lien : <a href="{{ loginUrl }}">{{ loginUrl }}</a></p>
+        <p style="font-size: 14px; color: #64748b;">If the button above does not work, copy and paste this link: <a href="{{ loginUrl }}">{{ loginUrl }}</a></p>
     ');
 
 $repository->save($template, true);
@@ -54,8 +54,8 @@ $mailerService = $container->get(DatabaseMailerService::class);
 
 $context = [
     'user' => [
-        'firstName' => 'Jean',
-        'lastName' => 'Dupont',
+        'firstName' => 'John',
+        'lastName' => 'Doe',
     ],
     'loginUrl' => 'https://callisto.example.com/login',
 ];

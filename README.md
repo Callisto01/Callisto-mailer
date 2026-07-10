@@ -1,28 +1,28 @@
 # Callisto Mailer Bundle (`callisto/callisto-mailer`)
 
-Le bundle **Callisto Mailer** est une extension moderne pour Symfony 8 permettant de stocker, compiler et envoyer des modèles d'e-mails gérés en base de données. Il intègre des layouts responsive premium (basés sur les chartes graphiques de Tailwind CSS et Bootstrap) avec styles inlinés pour une compatibilité maximale avec tous les clients de messagerie (Gmail, Outlook, Apple Mail, etc.).
+The **Callisto Mailer** bundle is a modern Symfony 8 extension allowing you to store, compile, and send email templates managed in a database. It integrates premium responsive layouts (based on Tailwind CSS and Bootstrap design guidelines) with inlined styles for maximum compatibility with all email clients (Gmail, Outlook, Apple Mail, etc.).
 
 ---
 
-## Fonctionnalités
-- 🗄️ **Stockage en base de données** : Gestion complète des sujets et corps d'e-mails sous forme d'entités ORM.
-- ⚡ **Compilation Twig Dynamique** : Interprétation automatique des variables Twig à la volée dans le sujet et le contenu.
-- 🎨 **Layouts Premium intégrés** : Deux layouts intégrés et optimisés (`Bootstrap` et `Tailwind`) à haute fidélité graphique.
-- ⚙️ **Intégration Symfony native** : Utilise le composant `Symfony\Component\Mailer` natif et l'injection de dépendances standard de Symfony 8.
+## Features
+- 🗄️ **Database Storage**: Complete management of email subjects and bodies as ORM entities.
+- ⚡ **Dynamic Twig Compilation**: Automatic on-the-fly Twig variable parsing in both the subject and the content.
+- 🎨 **Built-in Premium Layouts**: Two integrated and optimized high-fidelity graphic layouts (`Bootstrap` and `Tailwind`).
+- ⚙️ **Native Symfony Integration**: Uses the native `Symfony\Component\Mailer` component and standard Symfony 8 dependency injection.
 
 ---
 
 ## Installation
 
-### 1. Ajout du dépôt privé dans le `composer.json` du projet
-Étant un package privé, vous devez déclarer son emplacement (par exemple, un dépôt Git) dans le `composer.json` de votre application principale :
+### 1. Add private repository to project `composer.json`
+Since this is a private package, you must declare its location (for example, a Git repository) in your main application's `composer.json`:
 
 ```json
 {
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:votre-organisation/callisto-mailer.git"
+            "url": "git@github.com:your-organization/callisto-mailer.git"
         }
     ],
     "require": {
@@ -31,13 +31,13 @@ Le bundle **Callisto Mailer** est une extension moderne pour Symfony 8 permettan
 }
 ```
 
-Lancez ensuite l'installation :
+Then run the installation:
 ```bash
 composer require callisto/callisto-mailer
 ```
 
-### 2. Déclaration du Bundle
-Si vous utilisez **Symfony Flex**, le bundle est activé automatiquement. Sinon, ajoutez-le manuellement dans `config/bundles.php` :
+### 2. Register the Bundle
+If you are using **Symfony Flex**, the bundle is automatically enabled. Otherwise, manually add it to `config/bundles.php`:
 
 ```php
 // config/bundles.php
@@ -50,9 +50,9 @@ return [
 
 ---
 
-## Base de données & Migration
+## Database & Migration
 
-Le bundle expose l'entité `MailTemplate` mappée sur la table `callisto_mail_template`. Pour générer et appliquer la migration :
+The bundle exposes the `MailTemplate` entity mapped to the `callisto_mail_template` table. To generate and apply the migration:
 
 ```bash
 php bin/console make:migration
@@ -61,76 +61,76 @@ php bin/console doctrine:migrations:migrate
 
 ---
 
-## Création et Synchronisation de Templates via Twig (Console Command)
+## Creating and Synchronizing Templates via Twig (Console Command)
 
-Le bundle propose une commande console Symfony qui permet de synchroniser/importer automatiquement des fichiers Twig physiques vers la base de données. C'est le moyen le plus simple pour concevoir des templates tout en profitant du confort de l'IDE.
+The bundle provides a Symfony console command that automatically synchronizes/imports physical Twig files into the database. This is the easiest way to design templates while enjoying your IDE's comfort.
 
-### 1. Structure du fichier Twig attendue
-Créez des fichiers Twig (par exemple dans le dossier `templates/emails/`) et définissez les métadonnées de l'e-mail à l'aide de blocs Twig standard :
+### 1. Expected Twig File Structure
+Create Twig files (for example, in the `templates/emails/` folder) and define email metadata using standard Twig blocks:
 
 ```twig
 {# templates/emails/welcome_user.html.twig #}
-{% block subject %}Bienvenue chez Callisto, {{ user.firstName }} !{% endblock %}
+{% block subject %}Welcome to Callisto, {{ user.firstName }}!{% endblock %}
 {% block layout %}tailwind{% endblock %}
 {% block content %}
-    <h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Ravi de vous compter parmi nous !</h1>
-    <p>Bonjour {{ user.firstName }} {{ user.lastName }},</p>
-    <p>Votre compte a bien été créé. Vous pouvez désormais vous connecter à notre plateforme et explorer toutes nos fonctionnalités.</p>
+    <h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Delighted to have you with us!</h1>
+    <p>Hello {{ user.firstName }} {{ user.lastName }},</p>
+    <p>Your account has been successfully created. You can now log in to our platform and explore all our features.</p>
     <div style="margin: 32px 0; text-align: center;">
-        <a href="{{ loginUrl }}" class="btn-indigo">Accéder à mon espace</a>
+        <a href="{{ loginUrl }}" class="btn-indigo">Access my space</a>
     </div>
 {% endblock %}
 ```
 
 > [!TIP]
-> Si les blocs `subject` ou `layout` ne sont pas spécifiés dans le fichier, des valeurs par défaut seront appliquées (le sujet sera déduit du nom du fichier et le layout sera `tailwind` par défaut). Si aucun bloc n'est défini dans le fichier Twig, le fichier entier est traité comme le corps du message.
+> If the `subject` or `layout` blocks are not specified in the file, default values will be applied (the subject will be deduced from the file name, and the layout will be `tailwind` by default). If no blocks are defined in the Twig file, the entire file is treated as the message body.
 
-### 2. Lancer l'importation ou la synchronisation
-Pour exécuter l'importation depuis le dossier par défaut `templates/emails/` :
+### 2. Run Import or Synchronization
+To run the import from the default `templates/emails/` folder:
 
 ```bash
 php bin/console callisto:mailer:import-templates
 ```
 
-Vous pouvez spécifier un dossier différent en argument :
+You can specify a different folder as an argument:
 
 ```bash
-php bin/console callisto:mailer:import-templates templates/dossier_personnalise
+php bin/console callisto:mailer:import-templates templates/custom_folder
 ```
 
-Pour simuler l'importation sans modifier la base de données, utilisez l'option `--dry-run` :
+To simulate the import without modifying the database, use the `--dry-run` option:
 
 ```bash
 php bin/console callisto:mailer:import-templates --dry-run
 ```
 
-Chaque fichier Twig trouvé génère ou met à jour un template en base de données. Le `code` unique du modèle est automatiquement déduit du chemin relatif du fichier (par exemple, `templates/emails/users/welcome.html.twig` donnera le code `users_welcome`).
+Each Twig file found generates or updates a template in the database. The unique model `code` is automatically deduced from the relative path of the file (for example, `templates/emails/users/welcome.html.twig` will produce the code `users_welcome`).
 
 ---
 
-## Utilisation
+## Usage
 
-### 1. Création d'un modèle d'e-mail (MailTemplate)
-Vous pouvez ajouter un modèle en base de données via une fixture, un contrôleur d'administration, ou directement via SQL.
+### 1. Creating an Email Template (MailTemplate)
+You can add a template to the database via a fixture, an admin controller, or directly via SQL.
 
-Exemple d'enregistrement d'un template via Doctrine :
+Example of saving a template via Doctrine:
 ```php
 use Callisto\CallistoMailer\Entity\MailTemplate;
 use Doctrine\ORM\EntityManagerInterface;
 
-// ... dans un controlleur ou une commande :
+// ... in a controller or command:
 $template = new MailTemplate();
 $template->setCode('welcome_user');
-$template->setSubject('Bienvenue chez Callisto, {{ user.firstName }} !');
-$template->setLayout('tailwind'); // 'tailwind' ou 'bootstrap'
+$template->setSubject('Welcome to Callisto, {{ user.firstName }}!');
+$template->setLayout('tailwind'); // 'tailwind' or 'bootstrap'
 $template->setContent('
-    <h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Ravi de vous compter parmi nous !</h1>
-    <p>Bonjour {{ user.firstName }} {{ user.lastName }},</p>
-    <p>Votre compte a bien été créé. Vous pouvez désormais vous connecter à notre plateforme et explorer toutes nos fonctionnalités.</p>
+    <h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Delighted to have you with us!</h1>
+    <p>Hello {{ user.firstName }} {{ user.lastName }},</p>
+    <p>Your account has been successfully created. You can now log in to our platform and explore all our features.</p>
     <div style="margin: 32px 0; text-align: center;">
-        <a href="{{ loginUrl }}" class="btn-indigo">Accéder à mon espace</a>
+        <a href="{{ loginUrl }}" class="btn-indigo">Access my space</a>
     </div>
-    <p style="font-size: 14px; color: #64748b;">Si le bouton ci-dessus ne fonctionne pas, copiez-collez ce lien : <a href="{{ loginUrl }}">{{ loginUrl }}</a></p>
+    <p style="font-size: 14px; color: #64748b;">If the button above does not work, copy and paste this link: <a href="{{ loginUrl }}">{{ loginUrl }}</a></p>
 ');
 
 $entityManager->persist($template);
@@ -138,12 +138,12 @@ $entityManager->flush();
 ```
 
 > [!NOTE]  
-> Remarquez l'usage de la classe CSS `.btn-indigo` incluse dans le layout Tailwind, ou `.btn-primary` si vous aviez choisi le layout Bootstrap.
+> Notice the usage of the `.btn-indigo` CSS class included in the Tailwind layout, or `.btn-primary` if you had chosen the Bootstrap layout.
 
 ---
 
-### 2. Envoi de l'e-mail via le service
-Injectez simplement `DatabaseMailerService` dans vos services ou contrôleurs Symfony.
+### 2. Sending Email via the Service
+Simply inject `DatabaseMailerService` into your Symfony services or controllers.
 
 ```php
 <?php
@@ -162,14 +162,14 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(DatabaseMailerService $databaseMailerService): Response
     {
-        // Logique d'inscription fictive ...
+        // Dummy registration logic ...
         $user = [
-            'firstName' => 'Jean',
-            'lastName' => 'Dupont',
-            'email' => 'jean.dupont@example.com'
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+            'email' => 'john.doe@example.com'
         ];
 
-        // Envoi de l'email à l'utilisateur
+        // Send email to the user
         $databaseMailerService->send(
             code: 'welcome_user',
             recipient: $user['email'],
@@ -179,17 +179,17 @@ class RegistrationController extends AbstractController
             ]
         );
 
-        return new Response('Inscription réussie et e-mail envoyé !');
+        return new Response('Registration successful and email sent!');
     }
 }
 ```
 
 ---
 
-### 3. Fonctionnalités Avancées
+### 3. Advanced Features
 
-#### Ajouter des pièces jointes ou modifier l'objet `Email` avant envoi
-La méthode `send` accepte un argument de rappel (callback) permettant de manipuler l'objet `Email` de Symfony avant sa transmission au transporteur SMTP :
+#### Adding attachments or modifying the `Email` object before sending
+The `send` method accepts a callback argument allowing you to manipulate the Symfony `Email` object before it is passed to the SMTP transport:
 
 ```php
 use Symfony\Component\Mime\Email;
@@ -198,37 +198,37 @@ $databaseMailerService->send(
     code: 'invoice_template',
     recipient: 'client@example.com',
     context: ['invoice' => $invoice],
-    sender: 'facturation@callisto.com',
+    sender: 'billing@callisto.com',
     extraHeaders: ['X-Custom-Header' => 'CallistoApp'],
     callback: function (Email $email) {
-        $email->attachFromPath('/path/to/invoice.pdf', 'Facture.pdf', 'application/pdf');
+        $email->attachFromPath('/path/to/invoice.pdf', 'Invoice.pdf', 'application/pdf');
     }
 );
 ```
 
-#### Rendu seul (sans envoi)
-Si vous souhaitez prévisualiser un mail ou manipuler le contenu brut :
+#### Render Only (without sending)
+If you want to preview an email or manipulate the raw content:
 ```php
 $rendered = $databaseMailerService->render('welcome_user', [
-    'user' => ['firstName' => 'Jean', 'lastName' => 'Dupont'],
+    'user' => ['firstName' => 'John', 'lastName' => 'Doe'],
     'loginUrl' => 'https://callisto.example.com/login'
 ]);
 
-// $rendered contient :
+// $rendered contains:
 // [
-//     'subject' => 'Bienvenue chez Callisto, Jean !',
-//     'html'    => '<!DOCTYPE html><html>... [Le corps complet compilé et enveloppé] ...</html>'
+//     'subject' => 'Welcome to Callisto, John!',
+//     'html'    => '<!DOCTYPE html><html>... [The fully compiled and layout-wrapped body] ...</html>'
 // ]
 ```
 
 ---
 
-## Gestion des Layouts de Base Personnalisés (Custom Layouts)
+## Custom Layouts Management
 
-Le bundle permet d'utiliser des layouts de base personnalisés en dehors de `bootstrap` et `tailwind`. Vous avez deux façons de procéder :
+The bundle allows you to use custom base layouts other than `bootstrap` and `tailwind`. You can do this in two ways:
 
-### Option A : Déclaration Globale dans la Configuration (Recommandé)
-Vous pouvez enregistrer vos layouts personnalisés sous des alias dans la configuration Symfony de votre projet principal (ex: `config/packages/callisto_mailer.yaml`) :
+### Option A: Global Declaration in Configuration (Recommended)
+You can register your custom layouts under aliases in the Symfony configuration of your main project (e.g. `config/packages/callisto_mailer.yaml`):
 
 ```yaml
 # config/packages/callisto_mailer.yaml
@@ -238,110 +238,107 @@ callisto_mailer:
         custom_dark: '@App/emails/layouts/dark.html.twig'
 ```
 
-Dans votre base de données (entité `MailTemplate`), vous pouvez alors simplement renseigner l'alias configuré dans le champ `layout` (ex: `custom_modern` ou `custom_dark`). Le service résoudra automatiquement le chemin du fichier correspondant.
+In your database (entity `MailTemplate`), you can then simply fill the configured alias in the `layout` field (e.g. `custom_modern` or `custom_dark`). The service will automatically resolve the corresponding file path.
 
-### Option B : Chemin Direct Twig en Base de Données
-Si vous ne souhaitez pas déclarer vos layouts dans la configuration, vous pouvez enregistrer directement le chemin Twig complet dans le champ `layout` de votre `MailTemplate` en base de données. 
-Le service détectera automatiquement s'il s'agit d'un chemin direct si la valeur commence par `@` ou contient `.twig` ou `/`.
+### Option B: Direct Twig Path in Database
+If you do not want to declare your layouts in the configuration, you can save the full Twig path directly in the `layout` field of your `MailTemplate` in the database. 
+The service will automatically detect if it is a direct path if the value starts with `@` or contains `.twig` or `/`.
 
-Exemples de valeurs valides pour le champ `layout` en base de données :
+Valid values for the `layout` field in the database:
 - `@App/emails/layouts/premium.html.twig`
 - `emails/layouts/notification.html.twig`
 
 ---
 
-## Surcharge des Layouts par défaut
-Si vous utilisez les layouts intégrés (`bootstrap` ou `tailwind`) mais que vous souhaitez modifier leur code HTML/CSS de base sans changer le code de vos entités, vous pouvez les surcharger dans votre application principale en créant les fichiers aux emplacements suivants :
+## Overriding Default Layouts
+If you use the built-in layouts (`bootstrap` or `tailwind`) but want to modify their base HTML/CSS code without changing your entity data, you can override them in your main application by creating files at the following locations:
 
 - `templates/bundles/CallistoMailerBundle/layouts/base_tailwind.html.twig`
 - `templates/bundles/CallistoMailerBundle/layouts/base_bootstrap.html.twig`
 
 ---
 
-## Gestion et Administration des Templates
+## Template Management and Administration
 
----
+The `DatabaseMailerService` service also exposes utility methods to administer email templates (list, create/save, edit, and delete) directly from your PHP code (for example, in an admin controller or console command).
 
-## Gestion et Administration des Templates
-
-Le service `DatabaseMailerService` expose également des méthodes utilitaires permettant d'administrer les modèles de mails (lister, créer/sauvegarder, modifier et supprimer) directement depuis votre code PHP (par exemple, dans un contrôleur d'administration ou une commande console).
-
-### 1. Lister les templates
-Vous pouvez récupérer la liste de tous les modèles d'e-mails sous forme d'entités d'objets ou de simples tableaux associatifs :
+### 1. List Templates
+You can retrieve the list of all email templates as object entities or as simple associative arrays:
 
 ```php
-// Récupère un tableau d'entités MailTemplate[]
+// Retrieves an array of MailTemplate[] entities
 $templates = $databaseMailerService->listTemplates();
 
-// Récupère un tableau associatif simple (ex: pour des API JSON)
+// Retrieves a simple associative array (e.g., for JSON APIs)
 $templatesArray = $databaseMailerService->listTemplatesAsArray();
 ```
 
-### 2. Créer ou Mettre à Jour un template (Save)
-La méthode `saveTemplate` crée le modèle s'il n'existe pas ou le met à jour s'il existe déjà en base de données, puis applique immédiatement les modifications (flush). Elle supporte désormais la locale (i18n) et le contrat de variables attendues :
+### 2. Create or Update a Template (Save)
+The `saveTemplate` method creates the template if it does not exist or updates it if it already exists in the database, and applies the changes immediately (flush). It now supports the locale (i18n) and the expected variables contract:
 
 ```php
 $databaseMailerService->saveTemplate(
     code: 'user_reset_password',
-    subject: 'Réinitialisez votre mot de passe',
-    content: '<p>Bonjour {{ user.firstName }}, cliquez ici...</p>',
+    subject: 'Reset your password',
+    content: '<p>Hello {{ user.firstName }}, click here...</p>',
     layout: 'tailwind',
-    locale: 'fr',
-    expectedVariables: ['user.firstName', 'resetUrl'] // Contrat de variables attendues
+    locale: 'en',
+    expectedVariables: ['user.firstName', 'resetUrl'] // Expected variables contract
 );
 ```
 
-### 3. Modifier un template existant (Update)
-Si vous souhaitez modifier des champs spécifiques d'un modèle existant pour une locale précise :
+### 3. Edit an Existing Template (Update)
+If you want to modify specific fields of an existing template for a specific locale:
 
 ```php
 $databaseMailerService->updateTemplate(
     code: 'welcome_user',
     data: [
-        'subject' => 'Nouveau sujet de bienvenue !',
+        'subject' => 'New welcome subject!',
         'expectedVariables' => ['user.firstName', 'loginUrl']
     ],
-    locale: 'fr'
+    locale: 'en'
 );
 ```
 
-### 4. Supprimer un template
-Vous pouvez supprimer un modèle d'e-mail pour une locale spécifique :
+### 4. Delete a Template
+You can delete an email template for a specific locale:
 
 ```php
-$deleted = $databaseMailerService->deleteTemplate('old_obsolete_template', 'fr');
+$deleted = $databaseMailerService->deleteTemplate('old_obsolete_template', 'en');
 ```
 
 ---
 
-## Fonctionnalités Avancées
+## Advanced Features
 
-### 1. Support Multi-langue (i18n)
-Le bundle gère nativement le multi-langue via un champ `locale` dans l'entité `MailTemplate`. Une contrainte d'unicité composite sur `[code, locale]` garantit que vous pouvez avoir plusieurs déclinaisons linguistiques pour le même code de template (ex: `welcome_user` en `fr`, `en`, `es`).
+### 1. Multi-language Support (i18n)
+The bundle natively handles multi-language support via a `locale` field in the `MailTemplate` entity. A composite unique constraint on `[code, locale]` ensures you can have multiple language variations for the same template code (e.g. `welcome_user` in `fr`, `en`, `es`).
 
-Vous pouvez configurer la locale par défaut de votre bundle (fallback) dans `config/packages/callisto_mailer.yaml` :
+You can configure the fallback locale of your bundle in `config/packages/callisto_mailer.yaml`:
 ```yaml
+# config/packages/callisto_mailer.yaml
 callisto_mailer:
-    default_locale: 'fr'
+    default_locale: 'en'
 ```
 
-Lors de l'envoi ou du rendu, le service récupère la locale passée. Si celle-ci n'est pas trouvée, il basculera automatiquement sur la locale par défaut du bundle.
+When sending or rendering, the service uses the provided locale. If not found, it automatically falls back to the default locale of the bundle.
 ```php
 $databaseMailerService->send(
     code: 'welcome_user',
     recipient: 'user@example.com',
     context: ['user' => $user],
-    locale: 'en' // Recherche du template avec locale 'en' (fallback sur la locale par défaut 'fr')
+    locale: 'en' // Finds template with locale 'en' (falls back to default locale if not found)
 );
 ```
 
-### 2. Contrat de Variables (expectedVariables)
-Afin de sécuriser vos envois et d'éviter des erreurs de rendu Twig, vous pouvez lier un "contrat" de variables attendues à chaque template (ex: `['user.firstName', 'order.ref']`).
+### 2. Variables Contract (expectedVariables)
+To secure your emails and avoid Twig rendering errors, you can bind an "expected variables" contract to each template (e.g. `['user.firstName', 'order.ref']`).
 
-Si l'une de ces variables (ou clés imbriquées via notation pointée) est absente du contexte fourni à l'envoi, le service lèvera une exception personnalisée : `Callisto\CallistoMailer\Exception\MissingTemplateVariablesException`.
+If any of these variables (or nested keys using dotted notation) is missing from the provided context at sending time, the service will throw a custom exception: `Callisto\CallistoMailer\Exception\MissingTemplateVariablesException`.
 
-### 3. Gestion des Pièces Jointes
-La méthode `send` accepte un argument `$attachments` contenant un tableau de chemins de fichiers physiques (sous forme de chaînes de caractères) ou d'instances de `Symfony\Component\Mime\Part\DataPart` :
+### 3. Attachments Management
+The `send` method accepts an `$attachments` argument containing an array of physical file paths (as strings) or instances of `Symfony\Component\Mime\Part\DataPart`:
 
 ```php
 use Symfony\Component\Mime\Part\DataPart;
@@ -351,17 +348,17 @@ $databaseMailerService->send(
     recipient: 'client@example.com',
     context: ['order' => $order],
     attachments: [
-        '/path/to/invoices/INV-123.pdf', // Chemin vers fichier physique
-        new DataPart('Contenu brut', 'notes.txt', 'text/plain') // Instance de DataPart
+        '/path/to/invoices/INV-123.pdf', // Path to physical file
+        new DataPart('Raw content', 'notes.txt', 'text/plain') // DataPart instance
     ]
 );
 ```
 
-### 4. Événements Personnalisés (EventDispatcher)
-Deux événements spécifiques sont émis par le bundle pour vous permettre de hooker la logique d'envoi.
+### 4. Custom Events (EventDispatcher)
+Two specific events are dispatched by the bundle to allow you to hook into the sending logic.
 
 #### `BeforeTemplateMailSendEvent`
-Déclenché juste avant l'envoi. Permet d'analyser ou de modifier l'objet `Email` Symfony ou le contexte Twig :
+Triggered right before sending. Allows you to analyze or modify the Symfony `Email` object or the Twig context:
 ```php
 namespace App\EventSubscriber;
 
@@ -380,43 +377,43 @@ class MailMailerSubscriber implements EventSubscriberInterface
     public function onBeforeSend(BeforeTemplateMailSendEvent $event): void
     {
         $email = $event->getEmail();
-        // Ajouter un en-tête ou CC global de test
+        // Add a global test CC or header
         $email->addCc('monitoring@example.com');
     }
 }
 ```
 
 #### `AfterTemplateMailSendEvent`
-Déclenché juste après l'envoi (utile pour historiser ou logger les e-mails envoyés) :
+Triggered right after sending (useful to track history or log sent emails):
 ```php
 use Callisto\CallistoMailer\Event\AfterTemplateMailSendEvent;
 
 public function onAfterSend(AfterTemplateMailSendEvent $event): void
 {
-    // Log de l'envoi réussi
+    // Log successful send
     $code = $event->getCode();
     $recipient = $event->getEmail()->getTo()[0]->getAddress();
-    // Votre logique de log...
+    // Your logging logic...
 }
 ```
 
-### 5. Commande "Envoyer un test"
-Vous pouvez tester visuellement le rendu et la délivrabilité de vos e-mails directement depuis la console grâce à la commande :
+### 5. "Send Test" Command
+You can test the rendering and deliverability of your emails directly from the console using the command:
 
 ```bash
-php bin/console callisto:mailer:test-send {code} {locale} {destinataire}
+php bin/console callisto:mailer:test-send {code} {locale} {recipient}
 ```
 
-Exemple :
+Example:
 ```bash
-php bin/console callisto:mailer:test-send welcome_user fr admin@callisto.com
+php bin/console callisto:mailer:test-send welcome_user en admin@callisto.com
 ```
-Cette commande inspecte le contrat `expectedVariables` déclaré sur le template, génère automatiquement des données factices adaptées (y compris pour la notation pointée imbriquée), et appelle le service d'envoi.
+This command inspects the `expectedVariables` contract declared on the template, automatically generates appropriate mock data (including nested dot notation), and calls the mailer service.
 
-### 6. Intégration EasyAdmin 4
-Le bundle inclut un contrôleur CRUD pré-configuré prêt à l'emploi pour gérer vos modèles d'e-mails.
+### 6. EasyAdmin 4 Integration
+The bundle includes a pre-configured CRUD controller ready to manage your email templates.
 
-Pour l'activer dans votre panneau EasyAdmin, ajoutez simplement le contrôleur dans votre `DashboardController` principal :
+To enable it in your EasyAdmin panel, simply add the controller to your main `DashboardController`:
 
 ```php
 namespace App\Controller\Admin;
@@ -433,9 +430,8 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('Modèles de mails', 'fas fa-envelope', MailTemplateCrudController::class);
+        yield MenuItem::linkToCrud('Email Templates', 'fas fa-envelope', MailTemplateCrudController::class);
     }
 }
 ```
-L'interface propose un formulaire d'édition moderne avec des éditeurs de code Twig (WYSIWYG/CodeEditor) et la gestion intuitive des variables attendues.
-
+The interface offers a modern editing form with Twig code editors (WYSIWYG/CodeEditor) and intuitive management of expected variables.

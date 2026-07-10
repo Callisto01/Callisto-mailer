@@ -23,29 +23,29 @@ class MailTemplateCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         
-        yield TextField::new('code', 'Code de référence')
-            ->setHelp('Identifiant unique du modèle de mail (ex: user_welcome).');
+        yield TextField::new('code', 'Reference Code')
+            ->setHelp('Unique identifier of the mail template (e.g. user_welcome).');
         
-        yield TextField::new('locale', 'Langue / Locale')
-            ->setHelp('Code de langue (ex: fr, en).');
+        yield TextField::new('locale', 'Language / Locale')
+            ->setHelp('Language locale code (e.g. en, fr).');
             
-        yield TextField::new('subject', 'Sujet du mail')
-            ->setHelp('Sujet du mail. Supporte la syntaxe Twig.');
+        yield TextField::new('subject', 'Email Subject')
+            ->setHelp('Email subject. Supports Twig syntax.');
 
-        yield ChoiceField::new('layout', 'Gabarit de base (Layout)')
+        yield ChoiceField::new('layout', 'Base Layout')
             ->setChoices([
-                'Tailwind CSS (Moderne)' => 'tailwind',
-                'Bootstrap (Classique)' => 'bootstrap',
+                'Tailwind CSS (Modern)' => 'tailwind',
+                'Bootstrap (Classic)' => 'bootstrap',
             ])
             ->allowMultipleChoices(false)
-            ->setHelp('Layout global enveloppant le message.');
+            ->setHelp('Global layout wrapping the email message.');
 
-        yield ArrayField::new('expectedVariables', 'Variables attendues')
-            ->setHelp('Contrat JSON des variables obligatoires dans le contexte Twig (ex: user.firstName, order.ref).');
+        yield ArrayField::new('expectedVariables', 'Expected Variables')
+            ->setHelp('JSON contract of required variables in Twig context (e.g. user.firstName, order.ref).');
 
-        yield CodeEditorField::new('content', 'Contenu HTML du message')
+        yield CodeEditorField::new('content', 'HTML Content')
             ->setNumOfRows(15)
             ->setLanguage('twig')
-            ->setHelp('Corps du mail en HTML. Supporte la syntaxe Twig.');
+            ->setHelp('Email body in HTML. Supports Twig syntax.');
     }
 }
