@@ -20,6 +20,9 @@ class CallistoMailerBundle extends AbstractBundle
                     ->useAttributeAsKey('name')
                     ->scalarPrototype()->end()
                 ->end()
+                ->scalarNode('default_locale')
+                    ->defaultValue('fr')
+                ->end()
             ->end();
     }
 
@@ -29,7 +32,8 @@ class CallistoMailerBundle extends AbstractBundle
 
         $container->services()
             ->get(DatabaseMailerService::class)
-            ->arg('$customLayouts', $config['layouts'] ?? []);
+            ->arg('$customLayouts', $config['layouts'] ?? [])
+            ->arg('$defaultLocale', $config['default_locale'] ?? 'fr');
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void

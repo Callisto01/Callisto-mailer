@@ -90,20 +90,6 @@ class ImportTemplatesCommand extends Command
         $tableData = [];
 
         foreach ($twigFiles as $filePath) {
-            // Calculate template code based on relative path from scanning folder
-            $relativePath = substr($filePath, strlen($targetDir));
-            $relativePath = ltrim($relativePath, DIRECTORY_SEPARATOR . '/');
-
-            $code = $relativePath;
-            if (str_ends_with($code, '.html.twig')) {
-                $code = substr($code, 0, -10);
-            } elseif (str_ends_with($code, '.twig')) {
-                $code = substr($code, 0, -5);
-            }
-
-            $code = str_replace([DIRECTORY_SEPARATOR, '/'], '_', $code);
-            $code = strtolower($code);
-
             // Read file contents
             $fileContent = file_get_contents($filePath);
             if ($fileContent === false) {
@@ -111,14 +97,67 @@ class ImportTemplatesCommand extends Command
                 continue;
             }
 
+            // Calculate relative path
+            $relativePath = substr($filePath, strlen($targetDir));
+            $relativePath = ltrim($relativePath, DIRECTORY_SEPARATOR . '/');
+
+            // Split into path parts
+            $pathInfo = pathinfo($relativePath);
+            $dirname = $pathInfo['dirname'] === '.' ? '' : $pathInfo['dirname'];
+            $filename = $pathInfo['filename']; // e.g. "welcome.en.html" or "welcome"
+
+            // Parse locale from Twig block
+            $locale = $this->parseBlock($fileContent, 'locale');
+            
+            // Check if filename has a locale, e.g. "welcome.en.html"
+            $parts = explode('.', $filename);
+            $baseFilename = $parts[0];
+            $fileLocale = null;
+            
+            if (count($parts) > 1) {
+                $lastPart = end($parts);
+                if ($lastPart === 'html') {
+                    $potentialLocale = prev($parts);
+                    if ($potentialLocale && strlen($potentialLocale) === 2 && preg_match('/^[a-z]{2}$/i', $potentialLocale)) {
+                        $fileLocale = strtolower($potentialLocale);
+                        $baseFilenameIndex = array_search($potentialLocale, $parts);
+                        $baseFilename = implode('.', array_slice($parts, 0, $baseFilenameIndex));
+                    }
+                } else {
+                    $potentialLocale = $lastPart;
+                    if (strlen($potentialLocale) === 2 && preg_match('/^[a-z]{2}$/i', $potentialLocale)) {
+                        $fileLocale = strtolower($potentialLocale);
+                        $baseFilename = implode('.', array_slice($parts, 0, -1));
+                    }
+                }
+            }
+
+            if ($locale === null) {
+                $locale = $fileLocale ?? 'fr';
+            }
+
+            // Build template code (relative directory path + clean base filename)
+            $codePath = $dirname !== '' ? $dirname . DIRECTORY_SEPARATOR . $baseFilename : $baseFilename;
+            $code = str_replace([DIRECTORY_SEPARATOR, '/'], '_', $codePath);
+            $code = strtolower($code);
+
             // Parse metadata and content from Twig blocks
             $subject = $this->parseBlock($fileContent, 'subject');
             $layout = $this->parseBlock($fileContent, 'layout') ?? 'tailwind';
             $content = $this->parseBlock($fileContent, 'content');
+            
+            $expectedVariablesStr = $this->parseBlock($fileContent, 'expected_variables') 
+                ?? $this->parseBlock($fileContent, 'expectedVariables');
+            
+            $expectedVariables = [];
+            if ($expectedVariablesStr !== null && $expectedVariablesStr !== '') {
+                $expectedVariables = array_map('trim', explode(',', $expectedVariablesStr));
+                $expectedVariables = array_filter($expectedVariables);
+            }
 
             // Fallbacks if blocks are not found
             if ($subject === null) {
-                $subject = str_replace('_', ' ', ucfirst(pathinfo($filePath, PATHINFO_FILENAME)));
+                $subject = str_replace('_', ' ', ucfirst($baseFilename));
             }
 
             if ($content === null) {
@@ -126,22 +165,29 @@ class ImportTemplatesCommand extends Command
                 // Strip raw blocks if they are present in file content
                 $content = preg_replace('/{%\s*block\s+subject\s*%}.*?{%\s*endblock\s*%}/is', '', $content);
                 $content = preg_replace('/{%\s*block\s+layout\s*%}.*?{%\s*endblock\s*%}/is', '', $content);
+                $content = preg_replace('/{%\s*block\s+locale\s*%}.*?{%\s*endblock\s*%}/is', '', $content);
+                $content = preg_replace('/{%\s*block\s+expected_(?:variables|Variables)\s*%}.*?{%\s*endblock\s*%}/is', '', $content);
                 $content = trim($content);
             }
 
             // Find existing MailTemplate in database or instantiate a new one
-            $mailTemplate = $this->templateRepository->findOneBy(['code' => $code]);
+            $mailTemplate = $this->templateRepository->findOneBy([
+                'code' => $code,
+                'locale' => $locale,
+            ]);
             $isNew = false;
 
             if (!$mailTemplate) {
                 $mailTemplate = new MailTemplate();
                 $mailTemplate->setCode($code);
+                $mailTemplate->setLocale($locale);
                 $isNew = true;
             }
 
             $mailTemplate->setSubject($subject);
             $mailTemplate->setLayout($layout);
             $mailTemplate->setContent($content);
+            $mailTemplate->setExpectedVariables($expectedVariables);
 
             if (!$dryRun) {
                 $this->entityManager->persist($mailTemplate);
@@ -154,8 +200,10 @@ class ImportTemplatesCommand extends Command
 
             $tableData[] = [
                 $code,
+                $locale,
                 $subject,
                 $layout,
+                implode(', ', $expectedVariables),
                 $isNew ? '<fg=green>New (Created)</>' : '<fg=yellow>Existing (Updated)</>'
             ];
         }
@@ -164,7 +212,7 @@ class ImportTemplatesCommand extends Command
             $this->entityManager->flush();
         }
 
-        $io->table(['Code', 'Subject', 'Layout', 'Status'], $tableData);
+        $io->table(['Code', 'Locale', 'Subject', 'Layout', 'Expected Vars', 'Status'], $tableData);
 
         if ($dryRun) {
             $io->success(sprintf('Dry run complete. Found %d templates to import/update.', count($tableData)));

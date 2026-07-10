@@ -260,6 +260,10 @@ Si vous utilisez les layouts intégrés (`bootstrap` ou `tailwind`) mais que vou
 
 ## Gestion et Administration des Templates
 
+---
+
+## Gestion et Administration des Templates
+
 Le service `DatabaseMailerService` expose également des méthodes utilitaires permettant d'administrer les modèles de mails (lister, créer/sauvegarder, modifier et supprimer) directement depuis votre code PHP (par exemple, dans un contrôleur d'administration ou une commande console).
 
 ### 1. Lister les templates
@@ -271,50 +275,167 @@ $templates = $databaseMailerService->listTemplates();
 
 // Récupère un tableau associatif simple (ex: pour des API JSON)
 $templatesArray = $databaseMailerService->listTemplatesAsArray();
-/*
-$templatesArray contient :
-[
-    [
-        'code' => 'welcome_user',
-        'subject' => 'Bienvenue {{ user.firstName }} !',
-        'layout' => 'tailwind',
-        'content' => '...'
-    ]
-]
-*/
 ```
 
 ### 2. Créer ou Mettre à Jour un template (Save)
-La méthode `saveTemplate` crée le modèle s'il n'existe pas ou le met à jour s'il existe déjà en base de données, puis applique immédiatement les modifications (flush) :
+La méthode `saveTemplate` crée le modèle s'il n'existe pas ou le met à jour s'il existe déjà en base de données, puis applique immédiatement les modifications (flush). Elle supporte désormais la locale (i18n) et le contrat de variables attendues :
 
 ```php
 $databaseMailerService->saveTemplate(
     code: 'user_reset_password',
     subject: 'Réinitialisez votre mot de passe',
-    content: '<p>Veuillez cliquer ici pour réinitialiser votre mot de passe...</p>',
-    layout: 'tailwind' // Optionnel, défaut: 'tailwind'
+    content: '<p>Bonjour {{ user.firstName }}, cliquez ici...</p>',
+    layout: 'tailwind',
+    locale: 'fr',
+    expectedVariables: ['user.firstName', 'resetUrl'] // Contrat de variables attendues
 );
 ```
 
 ### 3. Modifier un template existant (Update)
-Si vous souhaitez modifier des champs spécifiques d'un modèle existant :
+Si vous souhaitez modifier des champs spécifiques d'un modèle existant pour une locale précise :
 
 ```php
-$databaseMailerService->updateTemplate('welcome_user', [
-    'subject' => 'Nouveau sujet pour le mail de bienvenue',
-    'layout' => 'bootstrap'
-]);
+$databaseMailerService->updateTemplate(
+    code: 'welcome_user',
+    data: [
+        'subject' => 'Nouveau sujet de bienvenue !',
+        'expectedVariables' => ['user.firstName', 'loginUrl']
+    ],
+    locale: 'fr'
+);
 ```
 
 ### 4. Supprimer un template
-Vous pouvez supprimer un modèle d'e-mail de la base de données grâce à son code unique :
+Vous pouvez supprimer un modèle d'e-mail pour une locale spécifique :
 
 ```php
-$deleted = $databaseMailerService->deleteTemplate('old_obsolete_template');
+$deleted = $databaseMailerService->deleteTemplate('old_obsolete_template', 'fr');
+```
 
-if ($deleted) {
-    // Le template a été supprimé avec succès
-} else {
-    // Le template n'existait pas en base de données
+---
+
+## Fonctionnalités Avancées
+
+### 1. Support Multi-langue (i18n)
+Le bundle gère nativement le multi-langue via un champ `locale` dans l'entité `MailTemplate`. Une contrainte d'unicité composite sur `[code, locale]` garantit que vous pouvez avoir plusieurs déclinaisons linguistiques pour le même code de template (ex: `welcome_user` en `fr`, `en`, `es`).
+
+Vous pouvez configurer la locale par défaut de votre bundle (fallback) dans `config/packages/callisto_mailer.yaml` :
+```yaml
+callisto_mailer:
+    default_locale: 'fr'
+```
+
+Lors de l'envoi ou du rendu, le service récupère la locale passée. Si celle-ci n'est pas trouvée, il basculera automatiquement sur la locale par défaut du bundle.
+```php
+$databaseMailerService->send(
+    code: 'welcome_user',
+    recipient: 'user@example.com',
+    context: ['user' => $user],
+    locale: 'en' // Recherche du template avec locale 'en' (fallback sur la locale par défaut 'fr')
+);
+```
+
+### 2. Contrat de Variables (expectedVariables)
+Afin de sécuriser vos envois et d'éviter des erreurs de rendu Twig, vous pouvez lier un "contrat" de variables attendues à chaque template (ex: `['user.firstName', 'order.ref']`).
+
+Si l'une de ces variables (ou clés imbriquées via notation pointée) est absente du contexte fourni à l'envoi, le service lèvera une exception personnalisée : `Callisto\CallistoMailer\Exception\MissingTemplateVariablesException`.
+
+### 3. Gestion des Pièces Jointes
+La méthode `send` accepte un argument `$attachments` contenant un tableau de chemins de fichiers physiques (sous forme de chaînes de caractères) ou d'instances de `Symfony\Component\Mime\Part\DataPart` :
+
+```php
+use Symfony\Component\Mime\Part\DataPart;
+
+$databaseMailerService->send(
+    code: 'invoice_template',
+    recipient: 'client@example.com',
+    context: ['order' => $order],
+    attachments: [
+        '/path/to/invoices/INV-123.pdf', // Chemin vers fichier physique
+        new DataPart('Contenu brut', 'notes.txt', 'text/plain') // Instance de DataPart
+    ]
+);
+```
+
+### 4. Événements Personnalisés (EventDispatcher)
+Deux événements spécifiques sont émis par le bundle pour vous permettre de hooker la logique d'envoi.
+
+#### `BeforeTemplateMailSendEvent`
+Déclenché juste avant l'envoi. Permet d'analyser ou de modifier l'objet `Email` Symfony ou le contexte Twig :
+```php
+namespace App\EventSubscriber;
+
+use Callisto\CallistoMailer\Event\BeforeTemplateMailSendEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class MailMailerSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            BeforeTemplateMailSendEvent::class => 'onBeforeSend',
+        ];
+    }
+
+    public function onBeforeSend(BeforeTemplateMailSendEvent $event): void
+    {
+        $email = $event->getEmail();
+        // Ajouter un en-tête ou CC global de test
+        $email->addCc('monitoring@example.com');
+    }
 }
 ```
+
+#### `AfterTemplateMailSendEvent`
+Déclenché juste après l'envoi (utile pour historiser ou logger les e-mails envoyés) :
+```php
+use Callisto\CallistoMailer\Event\AfterTemplateMailSendEvent;
+
+public function onAfterSend(AfterTemplateMailSendEvent $event): void
+{
+    // Log de l'envoi réussi
+    $code = $event->getCode();
+    $recipient = $event->getEmail()->getTo()[0]->getAddress();
+    // Votre logique de log...
+}
+```
+
+### 5. Commande "Envoyer un test"
+Vous pouvez tester visuellement le rendu et la délivrabilité de vos e-mails directement depuis la console grâce à la commande :
+
+```bash
+php bin/console callisto:mailer:test-send {code} {locale} {destinataire}
+```
+
+Exemple :
+```bash
+php bin/console callisto:mailer:test-send welcome_user fr admin@callisto.com
+```
+Cette commande inspecte le contrat `expectedVariables` déclaré sur le template, génère automatiquement des données factices adaptées (y compris pour la notation pointée imbriquée), et appelle le service d'envoi.
+
+### 6. Intégration EasyAdmin 4
+Le bundle inclut un contrôleur CRUD pré-configuré prêt à l'emploi pour gérer vos modèles d'e-mails.
+
+Pour l'activer dans votre panneau EasyAdmin, ajoutez simplement le contrôleur dans votre `DashboardController` principal :
+
+```php
+namespace App\Controller\Admin;
+
+use Callisto\CallistoMailer\Controller\Admin\MailTemplateCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+
+class DashboardController extends AbstractDashboardController
+{
+    // ...
+
+    public function configureMenuItems(): iterable
+    {
+        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkToCrud('Modèles de mails', 'fas fa-envelope', MailTemplateCrudController::class);
+    }
+}
+```
+L'interface propose un formulaire d'édition moderne avec des éditeurs de code Twig (WYSIWYG/CodeEditor) et la gestion intuitive des variables attendues.
+

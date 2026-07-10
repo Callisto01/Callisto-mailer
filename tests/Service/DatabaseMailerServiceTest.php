@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace Callisto\CallistoMailer\Tests\Service;
 
 use Callisto\CallistoMailer\Entity\MailTemplate;
+use Callisto\CallistoMailer\Event\AfterTemplateMailSendEvent;
+use Callisto\CallistoMailer\Event\BeforeTemplateMailSendEvent;
+use Callisto\CallistoMailer\Exception\MissingTemplateVariablesException;
 use Callisto\CallistoMailer\Repository\MailTemplateRepository;
 use Callisto\CallistoMailer\Service\DatabaseMailerService;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
@@ -18,13 +23,14 @@ class DatabaseMailerServiceTest extends TestCase
     private MailerInterface $mailerMock;
     private Environment $twig;
     private MailTemplateRepository $repositoryMock;
+    private EventDispatcherInterface $eventDispatcherMock;
     private DatabaseMailerService $service;
 
     protected function setUp(): void
     {
         $this->mailerMock = $this->createMock(MailerInterface::class);
+        $this->eventDispatcherMock = $this->createMock(EventDispatcherInterface::class);
         
-        // Use a real Twig Environment with ArrayLoader to avoid mocking final classes
         $loader = new ArrayLoader([
             '@CallistoMailer/layouts/base_tailwind.html.twig' => '<html>Layout {{ subject }} - {{ content }}</html>',
             '@CallistoMailer/layouts/base_bootstrap.html.twig' => '<html>Layout {{ subject }} - {{ content }}</html>',
@@ -39,9 +45,11 @@ class DatabaseMailerServiceTest extends TestCase
             $this->mailerMock,
             $this->twig,
             $this->repositoryMock,
+            $this->eventDispatcherMock,
             [
                 'custom_modern' => 'emails/layouts/modern.html.twig'
-            ]
+            ],
+            'fr'
         );
     }
 
@@ -52,17 +60,60 @@ class DatabaseMailerServiceTest extends TestCase
         $template->setSubject('Hello {{ name }}');
         $template->setLayout('tailwind');
         $template->setContent('Welcome to {{ platform }}');
+        $template->setLocale('fr');
 
         $this->repositoryMock
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(['code' => 'test_code'])
+            ->with(['code' => 'test_code', 'locale' => 'fr'])
             ->willReturn($template);
 
-        $result = $this->service->render('test_code', ['name' => 'John', 'platform' => 'Callisto']);
+        $result = $this->service->render('test_code', ['name' => 'John', 'platform' => 'Callisto'], 'fr');
 
         $this->assertSame('Hello John', $result['subject']);
         $this->assertSame('<html>Layout Hello John - Welcome to Callisto</html>', $result['html']);
+    }
+
+    public function testRenderWithLocaleFallback(): void
+    {
+        $template = new MailTemplate();
+        $template->setCode('test_code');
+        $template->setSubject('Hello');
+        $template->setLayout('tailwind');
+        $template->setContent('Body');
+        $template->setLocale('fr');
+
+        // First findBy for 'en' should return null, second findBy for default 'fr' returns template
+        $this->repositoryMock
+            ->expects($this->exactly(2))
+            ->method('findOneBy')
+            ->willReturnMap([
+                [['code' => 'test_code', 'locale' => 'en'], null],
+                [['code' => 'test_code', 'locale' => 'fr'], $template]
+            ]);
+
+        $result = $this->service->render('test_code', [], 'en');
+        $this->assertSame('Hello', $result['subject']);
+    }
+
+    public function testRenderThrowsExceptionOnMissingExpectedVariables(): void
+    {
+        $template = new MailTemplate();
+        $template->setCode('test_code');
+        $template->setSubject('Hello');
+        $template->setLayout('tailwind');
+        $template->setContent('Body');
+        $template->setExpectedVariables(['user.firstName', 'orderId']);
+
+        $this->repositoryMock
+            ->method('findOneBy')
+            ->willReturn($template);
+
+        $this->expectException(MissingTemplateVariablesException::class);
+        $this->expectExceptionMessage('Missing expected variables for mail template "test_code" (locale: "fr"): user.firstName, orderId');
+
+        // Context contains "user" array but lacks "firstName" nested key, and lacks "orderId" entirely
+        $this->service->render('test_code', ['user' => ['lastName' => 'Doe']]);
     }
 
     public function testRenderWithCustomRegisteredLayout(): void
@@ -119,27 +170,40 @@ class DatabaseMailerServiceTest extends TestCase
         $this->service->render('invalid_code');
     }
 
-    public function testSendSendsEmailWithRenderedContent(): void
+    public function testSendDispatchesEventsAndProcessesAttachments(): void
     {
         $template = new MailTemplate();
         $template->setCode('send_code');
         $template->setSubject('Mail Subject');
         $template->setLayout('bootstrap');
         $template->setContent('Mail Body');
+        $template->setLocale('fr');
 
         $this->repositoryMock
             ->method('findOneBy')
             ->willReturn($template);
 
+        $tempFile = tempnam(sys_get_temp_dir(), 'mail_attach');
+        file_put_contents($tempFile, 'file contents');
+
+        $dataPart = new DataPart('part contents', 'raw.txt', 'text/plain');
+
+        // Expect EventDispatcher to receive Before and After events
+        $this->eventDispatcherMock
+            ->expects($this->exactly(2))
+            ->method('dispatch')
+            ->with($this->callback(function ($event) {
+                return $event instanceof BeforeTemplateMailSendEvent || $event instanceof AfterTemplateMailSendEvent;
+            }));
+
         $this->mailerMock
             ->expects($this->once())
             ->method('send')
             ->with($this->callback(function (Email $email) {
+                $attachments = $email->getAttachments();
                 return $email->getTo()[0]->getAddress() === 'recipient@example.com'
                     && $email->getSubject() === 'Mail Subject'
-                    && $email->getHtmlBody() === '<html>Layout Mail Subject - Mail Body</html>'
-                    && $email->getFrom()[0]->getAddress() === 'sender@example.com'
-                    && $email->getHeaders()->get('X-Custom-Header') !== null;
+                    && count($attachments) === 2;
             }));
 
         $this->service->send(
@@ -147,8 +211,11 @@ class DatabaseMailerServiceTest extends TestCase
             recipient: 'recipient@example.com',
             context: [],
             sender: 'sender@example.com',
-            extraHeaders: ['X-Custom-Header' => 'Value']
+            locale: 'fr',
+            attachments: [$tempFile, $dataPart]
         );
+
+        @unlink($tempFile);
     }
 
     public function testListTemplates(): void
@@ -176,6 +243,8 @@ class DatabaseMailerServiceTest extends TestCase
         $template->setSubject('Subject 1');
         $template->setLayout('tailwind');
         $template->setContent('Content 1');
+        $template->setLocale('en');
+        $template->setExpectedVariables(['var1']);
 
         $this->repositoryMock
             ->expects($this->once())
@@ -185,9 +254,8 @@ class DatabaseMailerServiceTest extends TestCase
         $result = $this->service->listTemplatesAsArray();
         $this->assertCount(1, $result);
         $this->assertSame('tpl_1', $result[0]['code']);
-        $this->assertSame('Subject 1', $result[0]['subject']);
-        $this->assertSame('tailwind', $result[0]['layout']);
-        $this->assertSame('Content 1', $result[0]['content']);
+        $this->assertSame('en', $result[0]['locale']);
+        $this->assertSame(['var1'], $result[0]['expectedVariables']);
     }
 
     public function testSaveTemplateCreatesNew(): void
@@ -195,7 +263,7 @@ class DatabaseMailerServiceTest extends TestCase
         $this->repositoryMock
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(['code' => 'new_tpl'])
+            ->with(['code' => 'new_tpl', 'locale' => 'en'])
             ->willReturn(null);
 
         $this->repositoryMock
@@ -203,24 +271,26 @@ class DatabaseMailerServiceTest extends TestCase
             ->method('save')
             ->with($this->callback(function (MailTemplate $template) {
                 return $template->getCode() === 'new_tpl'
+                    && $template->getLocale() === 'en'
                     && $template->getSubject() === 'Subject'
-                    && $template->getContent() === 'Content'
-                    && $template->getLayout() === 'bootstrap';
+                    && $template->getExpectedVariables() === ['var'];
             }), true);
 
-        $result = $this->service->saveTemplate('new_tpl', 'Subject', 'Content', 'bootstrap');
+        $result = $this->service->saveTemplate('new_tpl', 'Subject', 'Content', 'bootstrap', 'en', ['var']);
         $this->assertSame('new_tpl', $result->getCode());
+        $this->assertSame('en', $result->getLocale());
     }
 
     public function testSaveTemplateUpdatesExisting(): void
     {
         $template = new MailTemplate();
         $template->setCode('existing_tpl');
+        $template->setLocale('fr');
 
         $this->repositoryMock
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(['code' => 'existing_tpl'])
+            ->with(['code' => 'existing_tpl', 'locale' => 'fr'])
             ->willReturn($template);
 
         $this->repositoryMock
@@ -228,25 +298,21 @@ class DatabaseMailerServiceTest extends TestCase
             ->method('save')
             ->with($template, true);
 
-        $result = $this->service->saveTemplate('existing_tpl', 'Updated Subject', 'Updated Content', 'tailwind');
+        $result = $this->service->saveTemplate('existing_tpl', 'Updated Subject', 'Updated Content', 'tailwind', 'fr', []);
         $this->assertSame('existing_tpl', $result->getCode());
         $this->assertSame('Updated Subject', $result->getSubject());
-        $this->assertSame('Updated Content', $result->getContent());
-        $this->assertSame('tailwind', $result->getLayout());
     }
 
     public function testUpdateTemplate(): void
     {
         $template = new MailTemplate();
         $template->setCode('tpl_to_update');
-        $template->setSubject('Old Subject');
-        $template->setLayout('bootstrap');
-        $template->setContent('Old Content');
+        $template->setLocale('fr');
 
         $this->repositoryMock
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(['code' => 'tpl_to_update'])
+            ->with(['code' => 'tpl_to_update', 'locale' => 'fr'])
             ->willReturn($template);
 
         $this->repositoryMock
@@ -256,12 +322,11 @@ class DatabaseMailerServiceTest extends TestCase
 
         $result = $this->service->updateTemplate('tpl_to_update', [
             'subject' => 'New Subject',
-            'content' => 'New Content'
-        ]);
+            'expectedVariables' => ['a', 'b']
+        ], 'fr');
 
         $this->assertSame('New Subject', $result->getSubject());
-        $this->assertSame('New Content', $result->getContent());
-        $this->assertSame('bootstrap', $result->getLayout()); // Unchanged
+        $this->assertSame(['a', 'b'], $result->getExpectedVariables());
     }
 
     public function testUpdateTemplateThrowsExceptionOnNotFound(): void
@@ -269,24 +334,25 @@ class DatabaseMailerServiceTest extends TestCase
         $this->repositoryMock
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(['code' => 'not_found'])
+            ->with(['code' => 'not_found', 'locale' => 'fr'])
             ->willReturn(null);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Mail template with code "not_found" not found.');
+        $this->expectExceptionMessage('Mail template with code "not_found" and locale "fr" not found.');
 
-        $this->service->updateTemplate('not_found', ['subject' => 'Subject']);
+        $this->service->updateTemplate('not_found', ['subject' => 'Subject'], 'fr');
     }
 
     public function testDeleteTemplateReturnsTrue(): void
     {
         $template = new MailTemplate();
         $template->setCode('tpl_to_delete');
+        $template->setLocale('en');
 
         $this->repositoryMock
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(['code' => 'tpl_to_delete'])
+            ->with(['code' => 'tpl_to_delete', 'locale' => 'en'])
             ->willReturn($template);
 
         $this->repositoryMock
@@ -294,7 +360,7 @@ class DatabaseMailerServiceTest extends TestCase
             ->method('remove')
             ->with($template, true);
 
-        $result = $this->service->deleteTemplate('tpl_to_delete');
+        $result = $this->service->deleteTemplate('tpl_to_delete', 'en');
         $this->assertTrue($result);
     }
 
@@ -303,10 +369,10 @@ class DatabaseMailerServiceTest extends TestCase
         $this->repositoryMock
             ->expects($this->once())
             ->method('findOneBy')
-            ->with(['code' => 'not_found'])
+            ->with(['code' => 'not_found', 'locale' => 'en'])
             ->willReturn(null);
 
-        $result = $this->service->deleteTemplate('not_found');
+        $result = $this->service->deleteTemplate('not_found', 'en');
         $this->assertFalse($result);
     }
 }

@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MailTemplateRepository::class)]
 #[ORM\Table(name: 'callisto_mail_template')]
+#[ORM\UniqueConstraint(name: 'uniq_code_locale', columns: ['code', 'locale'])]
 class MailTemplate
 {
     #[ORM\Id]
@@ -17,8 +18,11 @@ class MailTemplate
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::STRING, length: 100, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 100)]
     private string $code;
+
+    #[ORM\Column(type: Types::STRING, length: 10)]
+    private string $locale = 'fr';
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $subject;
@@ -28,6 +32,12 @@ class MailTemplate
 
     #[ORM\Column(type: Types::TEXT)]
     private string $content;
+
+    /**
+     * @var string[]
+     */
+    #[ORM\Column(type: Types::JSON)]
+    private array $expectedVariables = [];
 
     public function getId(): ?int
     {
@@ -42,6 +52,17 @@ class MailTemplate
     public function setCode(string $code): self
     {
         $this->code = $code;
+        return $this;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): self
+    {
+        $this->locale = $locale;
         return $this;
     }
 
@@ -75,6 +96,23 @@ class MailTemplate
     public function setContent(string $content): self
     {
         $this->content = $content;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getExpectedVariables(): array
+    {
+        return $this->expectedVariables;
+    }
+
+    /**
+     * @param string[] $expectedVariables
+     */
+    public function setExpectedVariables(array $expectedVariables): self
+    {
+        $this->expectedVariables = $expectedVariables;
         return $this;
     }
 }

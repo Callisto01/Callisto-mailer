@@ -9,3 +9,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/CallistoMailerBundle.php'
+            - '../src/Controller/'
+            - '../src/Event/'
+            - '../src/Exception/'
