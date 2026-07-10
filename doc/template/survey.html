@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre avis nous intéresse</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f6f9fc; color: #333;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
+        <tr>
+            <td style="background-color: #8b5cf6; padding: 40px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 26px;">Donnez votre avis !</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 40px; line-height: 1.6; text-align: center;">
+                <p style="text-align: left;">Bonjour {{ user.firstName }},</p>
+                <p style="text-align: left;">Vous utilisez notre service depuis maintenant quelques semaines. Afin de nous améliorer, nous aimerions connaître votre degré de satisfaction.</p>
+                <p style="font-weight: bold; margin: 30px 0 15px 0; font-size: 16px;">Recommanderiez-vous Callisto à vos collègues ou partenaires ?</p>
+                
+                <!-- NPS Score Buttons 0-10 -->
+                <div style="margin: 25px 0;">
+                    <table align="center" border="0" cellpadding="5" cellspacing="0" style="width: 100%;">
+                        <tr>
+                            <td align="center"><a href="{{ surveyUrl }}?score=0" style="background: #ef4444; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">0</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=1" style="background: #f97316; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">1</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=2" style="background: #f97316; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">2</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=3" style="background: #f97316; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">3</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=4" style="background: #f97316; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">4</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=5" style="background: #eab308; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">5</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=6" style="background: #eab308; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">6</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=7" style="background: #84cc16; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">7</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=8" style="background: #84cc16; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">8</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=9" style="background: #22c55e; color: #fff; padding: 10px 14px; border-radius: 4px; text-decoration: none; font-weight: bold;">9</a></td>
+                            <td align="center"><a href="{{ surveyUrl }}?score=10" style="background: #22c55e; color: #fff; padding: 9px 12px; border-radius: 4px; text-decoration: none; font-weight: bold;">10</a></td>
+                        </tr>
+                    </table>
+                    <div style="width: 100%; margin-top: 10px; font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between;">
+                        <span>Pas du tout probable</span>
+                        <span>Très probable</span>
+                    </div>
+                </div>
+                
+                <p style="text-align: left; margin-top: 30px;">Ce questionnaire ne vous prendra pas plus d'une minute.</p>
+                <p style="text-align: left;">Merci d'avance pour votre aide !</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #edf2f7;">
+                &copy; 2026 Callisto. Tous droits réservés.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

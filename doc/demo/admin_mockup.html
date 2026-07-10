@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callisto Mailer - EasyAdmin Backoffice Simulator</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #f9fafb;
+            --bg-sidebar: #ffffff;
+            --border-color: #e5e7eb;
+            --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --accent-color: #4f46e5;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #374151;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            background-color: var(--bg-sidebar);
+            min-height: 100vh;
+            border-right: 1px solid var(--border-color);
+            padding: 30px 20px;
+        }
+
+        .admin-sidebar .uk-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            color: #111827;
+        }
+
+        .admin-sidebar .uk-nav-default > li > a {
+            color: #4b5563;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .admin-sidebar .uk-nav-default > li > a:hover,
+        .admin-sidebar .uk-nav-default > li.uk-active > a {
+            color: var(--accent-color);
+            background: rgba(79, 70, 229, 0.05);
+            font-weight: 600;
+        }
+
+        .admin-sidebar .uk-nav-header {
+            color: #9ca3af;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 25px;
+            padding-left: 15px;
+        }
+
+        /* Main Area */
+        .admin-main {
+            padding: 40px 50px;
+        }
+
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* UIkit overrides with rounded corners */
+        .premium-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .uk-input, .uk-select, .uk-textarea {
+            border: 1px solid #d1d5db !important;
+            border-radius: 8px !important;
+            height: 42px;
+            transition: all 0.2s ease;
+        }
+
+        .uk-input:focus, .uk-select:focus, .uk-textarea:focus {
+            border-color: var(--accent-color) !important;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .uk-textarea {
+            height: auto;
+        }
+
+        .uk-button-primary {
+            background: var(--accent-gradient);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+        }
+
+        .uk-button-primary:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+            transform: translateY(-1px);
+        }
+
+        .uk-button-default {
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .uk-button-default:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        .uk-button-secondary {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #374151;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .uk-button-secondary:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        .uk-table th {
+            color: #374151;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .uk-table td {
+            color: #4b5563;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .uk-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .uk-modal-dialog {
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        .uk-badge {
+            background: var(--accent-gradient);
+            color: #fff;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .uk-label-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .uk-label-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        /* Elegant Toast Notification Style Overrides */
+        .uk-notification-message {
+            background: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            border-left: 4px solid var(--accent-color) !important;
+            border-radius: 10px !important;
+            padding: 16px 20px !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.03) !important;
+            color: #1f2937 !important;
+            font-size: 13.5px !important;
+            font-weight: 500 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px !important;
+        }
+        .uk-notification-message-success {
+            border-left-color: var(--success-color) !important;
+        }
+        .uk-notification-message-primary {
+            border-left-color: var(--accent-color) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="uk-grid-collapse" uk-grid>
+        <!-- Admin Sidebar -->
+        <div class="uk-width-1-5@m admin-sidebar uk-visible@m">
+            <div class="uk-padding uk-padding-remove-horizontal uk-text-center">
+                <a class="uk-logo" href="#">
+                    <i class="fa-solid fa-gauge-high uk-margin-small-right" style="color: var(--accent-color);"></i>
+                    <span>Callisto <strong class="gradient-text">Admin</strong></span>
+                </a>
+            </div>
+            <ul class="uk-nav uk-nav-default uk-margin-large-top">
+                <li class="uk-nav-header">General</li>
+                <li><a href="#"><i class="fa-solid fa-chart-line uk-margin-small-right"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa-solid fa-users uk-margin-small-right"></i> Users</a></li>
+                
+                <li class="uk-nav-header">Callisto Mailer Bundle</li>
+                <li class="uk-active"><a href="#"><i class="fa-solid fa-envelope-open-text uk-margin-small-right"></i> Email Templates</a></li>
+                
+                <li class="uk-nav-header">System</li>
+                <li><a href="#"><i class="fa-solid fa-sliders uk-margin-small-right"></i> Settings</a></li>
+            </ul>
+        </div>
+
+        <!-- Admin Main Content -->
+        <div class="uk-width-expand@m admin-main">
+            <!-- Header -->
+            <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-large-bottom">
+                <div>
+                    <ul class="uk-breadcrumb uk-margin-remove">
+                        <li><a href="#" class="uk-text-muted">EasyAdmin</a></li>
+                        <li><span class="uk-text-muted">Email Templates</span></li>
+                    </ul>
+                    <h1 class="uk-h2 uk-margin-remove-top uk-text-bold">Manage Email Templates</h1>
+                </div>
+                <div>
+                    <button class="uk-button uk-button-primary" uk-toggle="target: #modal-edit-template">
+                        <i class="fa-solid fa-plus uk-margin-small-right"></i> New Template
+                    </button>
+                </div>
+            </div>
+
+            <!-- Templates List Table -->
+            <div class="premium-card">
+                <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
+                    <h3 class="uk-margin-remove uk-text-bold">Database Saved Templates</h3>
+                    <span class="uk-badge">3 Templates</span>
+                </div>
+                <div class="uk-overflow-auto">
+                    <table class="uk-table uk-table-hover uk-table-divider uk-table-middle">
+                        <thead>
+                            <tr>
+                                <th class="uk-table-shrink">ID</th>
+                                <th>Unique Code</th>
+                                <th>Locale</th>
+                                <th>Subject</th>
+                                <th>Layout</th>
+                                <th>Required Variables (Contract)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><span class="uk-label uk-label-success">welcome_user</span></td>
+                                <td><code>fr</code></td>
+                                <td>Bienvenue sur Callisto, {{ user.firstName }} !</td>
+                                <td><span class="uk-badge">tailwind</span></td>
+                                <td>
+                                    <span class="uk-label uk-label-warning">user.firstName</span>
+                                    <span class="uk-label uk-label-warning">loginUrl</span>
+                                </td>
+                                <td>
+                                    <div class="uk-button-group">
+                                        <button class="uk-button uk-button-default uk-button-small" uk-toggle="target: #modal-edit-template">Edit</button>
+                                        <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-left" onclick="simulateTestSend('welcome_user', 'fr')">Test Send</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><span class="uk-label uk-label-success">welcome_user</span></td>
+                                <td><code>en</code></td>
+                                <td>Welcome to Callisto, {{ user.firstName }}!</td>
+                                <td><span class="uk-badge">tailwind</span></td>
+                                <td>
+                                    <span class="uk-label uk-label-warning">user.firstName</span>
+                                    <span class="uk-label uk-label-warning">loginUrl</span>
+                                </td>
+                                <td>
+                                    <div class="uk-button-group">
+                                        <button class="uk-button uk-button-default uk-button-small" uk-toggle="target: #modal-edit-template">Edit</button>
+                                        <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-left" onclick="simulateTestSend('welcome_user', 'en')">Test Send</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><span class="uk-label uk-label-success">password_reset</span></td>
+                                <td><code>fr</code></td>
+                                <td>Réinitialisation de votre mot de passe</td>
+                                <td><span class="uk-badge">bootstrap</span></td>
+                                <td>
+                                    <span class="uk-label uk-label-warning">resetUrl</span>
+                                </td>
+                                <td>
+                                    <div class="uk-button-group">
+                                        <button class="uk-button uk-button-default uk-button-small" uk-toggle="target: #modal-edit-template">Edit</button>
+                                        <button class="uk-button uk-button-secondary uk-button-small uk-margin-small-left" onclick="simulateTestSend('password_reset', 'fr')">Test Send</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer info -->
+            <div class="uk-margin-medium-top uk-text-center uk-text-meta">
+                EasyAdmin 4 backoffice simulator integration for Callisto Mailer.
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Create / Edit simulation -->
+    <div id="modal-edit-template" class="uk-modal-container" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h2 class="uk-modal-title"><i class="fa-solid fa-pen-to-square uk-margin-small-right text-gradient"></i> Edit Email Template</h2>
+            
+            <form class="uk-form-stacked uk-margin-medium-top">
+                <div class="uk-margin" uk-grid>
+                    <div class="uk-width-1-2">
+                        <label class="uk-form-label uk-text-bold">Template Unique Code</label>
+                        <input class="uk-input" type="text" value="welcome_user" disabled style="background-color: #f3f4f6 !important;">
+                    </div>
+                    <div class="uk-width-1-4">
+                        <label class="uk-form-label uk-text-bold">Locale (i18n)</label>
+                        <input class="uk-input" type="text" value="fr">
+                    </div>
+                    <div class="uk-width-1-4">
+                        <label class="uk-form-label uk-text-bold">Gabarit (Layout)</label>
+                        <select class="uk-select">
+                            <option selected>tailwind</option>
+                            <option>bootstrap</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label uk-text-bold">Email Subject (Twig compilable)</label>
+                    <input class="uk-input" type="text" value="Bienvenue sur Callisto, {{ user.firstName }} !">
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label uk-text-bold">Required Variables (Comma separated)</label>
+                    <input class="uk-input" type="text" value="user.firstName, loginUrl" placeholder="user.firstName, loginUrl">
+                    <span class="uk-text-meta">The bundle will throw a <code>MissingTemplateVariablesException</code> if these context keys are missing at send time.</span>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label uk-text-bold">Email Body Content (HTML / Twig)</label>
+                    <textarea class="uk-textarea" rows="8" style="font-family: monospace; font-size: 13.5px;"><h1 style="color: #0f172a; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Ravis de vous compter parmi nous !</h1>
+<p>Bonjour {{ user.firstName }},</p>
+<p>Votre compte a été configuré avec succès.</p>
+<div style="margin: 30px 0; text-align: center;">
+    <a href="{{ loginUrl }}" class="btn-indigo">Accéder à mon espace</a>
+</div></textarea>
+                </div>
+            </form>
+            
+            <p class="uk-text-right uk-margin-large-top">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary uk-modal-close" type="button" onclick="UIkit.notification({message: '<i class=\'fa-solid fa-check uk-text-success\'></i> Changes saved successfully (Doctrine flush)!', status: 'success'})">Save</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"></script>
+    
+    <script>
+        function simulateTestSend(code, locale) {
+            UIkit.modal.confirm(`<strong>CLI command simulation:</strong><br><code>php bin/console callisto:mailer:test-send ${code} ${locale} admin@callisto.com</code><br><br>Do you want to trigger the test send?`).then(function() {
+                UIkit.notification({
+                    message: `<i class="fa-solid fa-envelope-circle-check uk-text-success"></i> <div><strong>Success:</strong> Simulated send completed to admin@callisto.com!</div>`,
+                    status: 'success',
+                    timeout: 4000
+                });
+            }, function () {
+                // Cancelled
+            });
+        }
+    </script>
+</body>
+</html>

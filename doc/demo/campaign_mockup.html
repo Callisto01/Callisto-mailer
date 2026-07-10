@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callisto Mailer - Campaigns & Analytics Simulator</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #f9fafb;
+            --border-color: #e5e7eb;
+            --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --accent-color: #4f46e5;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #374151;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .portal-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            height: 70px;
+        }
+
+        .portal-header .uk-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            color: #111827;
+        }
+
+        .portal-header .uk-navbar-nav > li > a {
+            color: #4b5563;
+            font-weight: 500;
+        }
+        .portal-header .uk-navbar-nav > li > a:hover,
+        .portal-header .uk-navbar-nav > li.uk-active > a {
+            color: var(--accent-color);
+        }
+
+        .portal-main {
+            padding: 40px 0;
+        }
+
+        /* UIkit overrides with rounded corners */
+        .premium-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .premium-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card {
+            border-left: 4px solid var(--accent-color);
+        }
+        .stat-card.success {
+            border-left-color: var(--success-color);
+        }
+        .stat-card.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .uk-input, .uk-select {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            height: 42px;
+            font-size: 14px;
+        }
+
+        .uk-input:focus, .uk-select:focus {
+            border-color: var(--accent-color) !important;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .uk-button-primary {
+            background: var(--accent-gradient);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            height: 46px;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .uk-button-primary:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+            transform: translateY(-1px);
+        }
+
+        .uk-table th {
+            color: #374151;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+        }
+
+        .uk-badge {
+            background: var(--accent-gradient);
+            color: #fff;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Elegant Toast Notification Style Overrides */
+        .uk-notification-message {
+            background: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            border-left: 4px solid var(--accent-color) !important;
+            border-radius: 10px !important;
+            padding: 16px 20px !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.03) !important;
+            color: #1f2937 !important;
+            font-size: 13.5px !important;
+            font-weight: 500 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px !important;
+        }
+        .uk-notification-message-success {
+            border-left-color: var(--success-color) !important;
+        }
+        .uk-notification-message-primary {
+            border-left-color: var(--accent-color) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="uk-navbar-container portal-header" uk-navbar>
+        <div class="uk-navbar-left uk-margin-medium-left">
+            <a class="uk-navbar-item uk-logo" href="#">
+                <i class="fa-solid fa-chart-pie uk-margin-small-right" style="color: var(--accent-color);"></i>
+                <span>Callisto <strong class="gradient-text">Campaigns</strong></span>
+            </a>
+        </div>
+        <div class="uk-navbar-right uk-margin-medium-right">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active"><a href="#">Overview</a></li>
+                <li><a href="#"><i class="fa-solid fa-envelope-open uk-margin-small-right"></i> Sent Batches</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="uk-container uk-container-large portal-main">
+        
+        <!-- Analytics Cards Row -->
+        <div class="uk-grid-medium uk-child-width-1-4@m uk-margin-medium-bottom" uk-grid>
+            <div>
+                <div class="premium-card stat-card">
+                    <span class="uk-text-meta uk-text-uppercase uk-text-bold">Total Sent</span>
+                    <h3 class="uk-margin-small-top uk-margin-remove-bottom uk-text-bold">14,285</h3>
+                    <span class="uk-text-success uk-text-small"><i class="fa-solid fa-arrow-up"></i> +12% this month</span>
+                </div>
+            </div>
+            <div>
+                <div class="premium-card stat-card success">
+                    <span class="uk-text-meta uk-text-uppercase uk-text-bold">Delivery Rate</span>
+                    <h3 class="uk-margin-small-top uk-margin-remove-bottom uk-text-bold">99.8%</h3>
+                    <span class="uk-text-muted uk-text-small">Minimal bounces</span>
+                </div>
+            </div>
+            <div>
+                <div class="premium-card stat-card warning">
+                    <span class="uk-text-meta uk-text-uppercase uk-text-bold">Open Rate</span>
+                    <h3 class="uk-margin-small-top uk-margin-remove-bottom uk-text-bold">42.5%</h3>
+                    <span class="uk-text-success uk-text-small"><i class="fa-solid fa-arrow-up"></i> +2.3% vs baseline</span>
+                </div>
+            </div>
+            <div>
+                <div class="premium-card stat-card">
+                    <span class="uk-text-meta uk-text-uppercase uk-text-bold">Click Rate</span>
+                    <h3 class="uk-margin-small-top uk-margin-remove-bottom uk-text-bold">18.1%</h3>
+                    <span class="uk-text-muted uk-text-small">Call to action clicks</span>
+                </div>
+            </div>
+        </div>
+
+        <div uk-grid class="uk-grid-large">
+            <!-- Campaign Creator Form -->
+            <div class="uk-width-1-3@m">
+                <div class="premium-card">
+                    <h2 class="uk-h3 uk-text-bold uk-margin-remove-bottom">
+                        <i class="fa-solid fa-paper-plane uk-margin-small-right" style="color: var(--accent-color);"></i> Send Campaign
+                    </h2>
+                    <p class="uk-text-meta uk-margin-small-top uk-margin-medium-bottom">Select a database-saved template and dispatch it to a recipient list segment.</p>
+                    
+                    <form class="uk-form-stacked" onsubmit="simulateCampaignSend(event)">
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-bold">Callisto Template</label>
+                            <select class="uk-select" id="camp-template">
+                                <option value="newsletter">Monthly Newsletter (newsletter)</option>
+                                <option value="survey">NPS Satisfaction Survey (survey)</option>
+                                <option value="welcome">Welcome User (welcome_user)</option>
+                            </select>
+                        </div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-bold">Recipient Segment</label>
+                            <select class="uk-select" id="camp-segment">
+                                <option value="all">All SaaS Users (4,210 contacts)</option>
+                                <option value="leads">Registered Leads (1,840 contacts)</option>
+                                <option value="newsletter">Newsletter Subscribers (8,150 contacts)</option>
+                            </select>
+                        </div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-bold">Fallback Subject (Optional)</label>
+                            <input class="uk-input" type="text" placeholder="Uses database subject if empty">
+                        </div>
+                        <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-top" type="submit">
+                            Launch Campaign
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Campaign History Log -->
+            <div class="uk-width-expand@m">
+                <div class="premium-card">
+                    <h2 class="uk-h3 uk-text-bold uk-margin-remove-bottom">
+                        <i class="fa-solid fa-chart-line uk-text-success uk-margin-small-right"></i> Bulk Email History
+                    </h2>
+                    <p class="uk-text-meta uk-margin-small-top uk-margin-medium-bottom">Delivery reports of recent bulk dispatches sent through the bundle.</p>
+                    
+                    <div class="uk-overflow-auto">
+                        <table class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-text-small">
+                            <thead>
+                                <tr>
+                                    <th>Campaign Name</th>
+                                    <th>DB Template</th>
+                                    <th>Recipients</th>
+                                    <th>Status</th>
+                                    <th>Sent At</th>
+                                    <th>Report</th>
+                                </tr>
+                            </thead>
+                            <tbody id="campaign-table-body">
+                                <tr>
+                                    <td><strong>July 2026 Newsletter</strong></td>
+                                    <td><code>newsletter</code></td>
+                                    <td>8,150 subscribers</td>
+                                    <td><span class="uk-label uk-label-success">Completed</span></td>
+                                    <td>Yesterday at 14:30</td>
+                                    <td><button class="uk-button uk-button-default uk-button-small" onclick="viewReport('July 2026 Newsletter', '42.5%', '18.1%')">Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>NPS Survey</strong></td>
+                                    <td><code>survey</code></td>
+                                    <td>2,400 customers</td>
+                                    <td><span class="uk-label uk-label-success">Completed</span></td>
+                                    <td>3 days ago</td>
+                                    <td><button class="uk-button uk-button-default uk-button-small" onclick="viewReport('NPS Survey', '56.2%', '24.7%')">Details</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal view report detail -->
+    <div id="modal-report" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h2 class="uk-modal-title" id="report-title">Detailed Statistics</h2>
+            
+            <div class="uk-grid-small uk-child-width-1-3 uk-text-center uk-margin-medium-top uk-margin-medium-bottom" uk-grid>
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+                        <span class="uk-text-meta">Open Rate</span>
+                        <h4 class="uk-margin-remove-top uk-text-bold uk-text-primary" id="report-open">45%</h4>
+                    </div>
+                </div>
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+                        <span class="uk-text-meta">Click Rate</span>
+                        <h4 class="uk-margin-remove-top uk-text-bold uk-text-success" id="report-click">18%</h4>
+                    </div>
+                </div>
+                <div>
+                    <div class="uk-card uk-card-default uk-card-body uk-padding-small">
+                        <span class="uk-text-meta">Delivered</span>
+                        <h4 class="uk-margin-remove-top uk-text-bold uk-text-muted">99.9%</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="uk-alert-primary" uk-alert>
+                <p class="uk-margin-remove">Dynamic rendering and dispatch compiled in 1.8 seconds.</p>
+            </div>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-primary uk-modal-close" type="button">Close</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"></script>
+
+    <script>
+        function simulateCampaignSend(e) {
+            e.preventDefault();
+            const template = document.getElementById('camp-template').value;
+            const segment = document.getElementById('camp-segment').value;
+
+            UIkit.notification({
+                message: `<i class="fa-solid fa-spinner fa-spin uk-text-primary"></i> <div>Loading segment contacts...</div>`, 
+                status: 'primary'
+            });
+
+            setTimeout(() => {
+                UIkit.notification({
+                    message: `<i class="fa-solid fa-gears uk-text-primary"></i> <div>Compiling Twig template variables from database...</div>`, 
+                    status: 'primary'
+                });
+                
+                setTimeout(() => {
+                    UIkit.notification({
+                        message: `<i class="fa-solid fa-envelope-circle-check uk-text-success"></i> <div>Campaign successfully launched via DatabaseMailerService!</div>`, 
+                        status: 'success'
+                    });
+
+                    // Add row
+                    const tbody = document.getElementById('campaign-table-body');
+                    const newRow = document.createElement('tr');
+                    
+                    const recipients = segment === 'all' ? '4,210 contacts' : (segment === 'leads' ? '1,840 contacts' : '8,150 subscribers');
+                    const campaignName = `Campaign from ${new Date().toLocaleDateString()}`;
+
+                    newRow.innerHTML = `
+                        <td><strong>${campaignName}</strong></td>
+                        <td><code>${template}</code></td>
+                        <td>${recipients}</td>
+                        <td><span class="uk-label uk-label-warning">Sending</span></td>
+                        <td>Just now</td>
+                        <td><button class="uk-button uk-button-default uk-button-small" onclick="viewReport('${campaignName}', '0%', '0%')">Details</button></td>
+                    `;
+                    tbody.insertBefore(newRow, tbody.firstChild);
+
+                }, 1200);
+            }, 1200);
+        }
+
+        function viewReport(name, open, click) {
+            document.getElementById('report-title').innerText = `Report: ${name}`;
+            document.getElementById('report-open').innerText = open;
+            document.getElementById('report-click').innerText = click;
+            UIkit.modal('#modal-report').show();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="demo-subscriber">
+    <h2>Practical Case 2: EventSubscriber</h2>
+    <p>
+        This subscriber catches successful email deliveries to log audit records in the database.
+    </p>
+
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-demo-sub"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-php" id="code-demo-sub">&lt;?php
+
+declare(strict_types=1);
+
+namespace App\EventSubscriber;
+
+use App\Entity\EmailLog;
+use Callisto\CallistoMailer\Event\AfterTemplateMailSendEvent;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class EmailAuditSubscriber implements EventSubscriberInterface
+{
+    public function __construct(
+        private EntityManagerInterface $em
+    ) {}
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            AfterTemplateMailSendEvent::class => 'onEmailSent',
+        ];
+    }
+
+    public function onEmailSent(AfterTemplateMailSendEvent $event): void
+    {
+        $email = $event->getEmail();
+        $code = $event->getCode();
+
+        $recipients = $email->getTo();
+        $recipientAddress = count($recipients) > 0 ? $recipients[0]->getAddress() : 'unknown';
+
+        $log = new EmailLog();
+        $log->setTemplateCode($code);
+        $log->setRecipient($recipientAddress);
+        $log->setSubject($email->getSubject());
+        $log->setSentAt(new \DateTimeImmutable());
+
+        $this->em->persist($log);
+        $this->em->flush();
+    }
+}</code></pre>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="entity">
+    <h2>MailTemplate Entity</h2>
+    <p>
+        Here is the description of the fields in the <code>Callisto\CallistoMailer\Entity\MailTemplate</code> Doctrine entity:
+    </p>
+
+    <div class="uk-overflow-auto">
+        <table class="uk-table uk-table-striped uk-table-hover uk-table-divider">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>id</code></td>
+                    <td><code>int</code></td>
+                    <td>Auto-incremented unique database identifier.</td>
+                </tr>
+                <tr>
+                    <td><code>code</code></td>
+                    <td><code>string</code></td>
+                    <td>Logical unique code identifying the email template (e.g. <code>welcome_user</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>locale</code></td>
+                    <td><code>string</code></td>
+                    <td>ISO-639-1 language code (e.g. <code>fr</code>, <code>en</code>). Defaults to <code>fr</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>subject</code></td>
+                    <td><code>string</code></td>
+                    <td>Email subject, compilable with Twig (e.g. <code>Welcome {{ user.firstName }}!</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>layout</code></td>
+                    <td><code>string</code></td>
+                    <td>Layout alias (<code>tailwind</code>, <code>bootstrap</code>) or absolute Twig path.</td>
+                </tr>
+                <tr>
+                    <td><code>content</code></td>
+                    <td><code>text</code></td>
+                    <td>Email body content written in HTML/Twig.</td>
+                </tr>
+                <tr>
+                    <td><code>expectedVariables</code></td>
+                    <td><code>array</code></td>
+                    <td>JSON array of mandatory variables validation contract (e.g. <code>["user.firstName", "loginUrl"]</code>).</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

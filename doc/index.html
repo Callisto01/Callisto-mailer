@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callisto Mailer - Official Documentation</title>
+    <meta name="description" content="Official documentation for the Symfony 8 callisto/callisto-mailer package. Manage email templates in the database with responsive layouts.">
+    
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+
+    <!-- PrismJS Light Theme (For code highlighting matching UIkit default) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+    <!-- Minimal Layout Helpers -->
+    <style>
+        body {
+            padding-top: 80px;
+        }
+        .sidebar-sticky {
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        .code-container {
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        pre[class*="language-"] {
+            margin: 0 !important;
+            padding: 1.5em !important;
+            border-radius: 4px;
+        }
+
+        .uk-card{
+            border-radius: 12px;
+        }
+
+        .uk-card:not(:hover){
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+        }
+
+        .uk-button{
+            border-radius: 500px;
+            text-transform: none;
+            font-weight: 600;
+        }
+        [uk-alert]{
+            border-radius: 12px;
+        }
+        .uk-input{
+            border-radius: 500px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Target mount point for dynamic HTML imports -->
+    <div id="app">
+        <!-- Top Navigation Bar -->
+        <div class="uk-position-relative">
+            <nav class="uk-navbar-container uk-position-fixed uk-position-top" uk-navbar style="z-index: 1000; border-bottom: 1px solid #e5e5e5; background: #f8f9fa;">
+                <div class="uk-navbar-left uk-margin-medium-left">
+                    <a class="uk-navbar-item uk-logo" href="#">
+                        <strong>Callisto-Mailer</strong>
+                    </a>
+                </div>
+                <div class="uk-navbar-right uk-margin-medium-right">
+                    <ul class="uk-navbar-nav uk-visible@m">
+                        <li class="uk-active"><a href="#intro">Documentation</a></li>
+                        <li><a href="https://github.com/Callisto01/Callisto-mailer" target="_blank" rel="noopener"><i class="fa-brands fa-github uk-margin-small-right"></i> GitHub</a></li>
+                    </ul>
+                    <a class="uk-navbar-toggle uk-hidden@m" uk-toggle="target: #offcanvas-sidebar" uk-navbar-toggle-icon></a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Container -->
+        <div class="uk-container uk-container-large uk-margin-medium-top">
+            <div uk-grid class="uk-grid-large">
+                
+                <!-- Sidebar (Left) -->
+                <div class="uk-width-1-4@m uk-visible@m">
+                    <div class="sidebar-sticky" uk-sticky="offset: 100; bottom: #content-body">
+                        <div class="uk-margin-small-bottom">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon" uk-icon="icon: search"></span>
+                                <input class="uk-input uk-form-small" id="sidebar-search" type="text" placeholder="Search...">
+                            </div>
+                        </div>
+                        <ul class="uk-nav uk-nav-default" uk-scrollspy-nav="closest: li; scroll: true; offset: 100">
+                            <li class="uk-nav-header">1. Getting Started</li>
+                            <li><a href="#intro">Introduction</a></li>
+                            <li><a href="#installation">Installation</a></li>
+                            <li><a href="#configuration">Basic Configuration</a></li>
+                            <li><a href="#database">Database &amp; Migrations</a></li>
+
+                            <li class="uk-nav-header">2. Core Features</li>
+                            <li><a href="#layouts">Layouts</a></li>
+                            <li><a href="#entity">MailTemplate Entity</a></li>
+                            <li><a href="#simple-send">Simple Send (Service)</a></li>
+
+                            <li class="uk-nav-header">3. Advanced Features</li>
+                            <li><a href="#contract">Variables Contract</a></li>
+                            <li><a href="#i18n">Multi-language (i18n)</a></li>
+                            <li><a href="#attachments">Attachments</a></li>
+                            <li><a href="#events">Events</a></li>
+                            <li><a href="#easyadmin">EasyAdmin Integration</a></li>
+                            <li><a href="#cli">CLI Tools (Console)</a></li>
+
+                            <li class="uk-nav-header">4. Practical Cases</li>
+                            <li><a href="#demo-controller">Symfony Controller</a></li>
+                            <li><a href="#demo-subscriber">EventSubscriber</a></li>
+
+                            <li class="uk-nav-header">5. Email Templates</li>
+                            <li><a href="#templates-list">10 Ready-to-use Templates</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Content Area (Right) -->
+                <div class="uk-width-expand@m" id="content-body">
+                    
+                    <div class="uk-margin-medium-bottom uk-background-primary uk-light uk-padding-large uk-border-rounded">
+                        <span class="uk-label">Symfony 8 Bundle</span>
+                        <h1 class="uk-heading-small uk-margin-small-top">Official Documentation</h1>
+                        <p class="uk-text-lead">
+                            Manage and send dynamic email templates directly from your database with premium Bootstrap &amp; Tailwind layouts.
+                        </p>
+                    </div>
+
+                    <!-- Placeholders to load HTML sub-files -->
+                    <div id="intro-placeholder"></div>
+                    <div id="installation-placeholder"></div>
+                    <div id="configuration-placeholder"></div>
+                    <div id="database-placeholder"></div>
+
+                    <div id="layouts-placeholder"></div>
+                    <div id="entity-placeholder"></div>
+                    <div id="simple-send-placeholder"></div>
+
+                    <div id="contract-placeholder"></div>
+                    <div id="i18n-placeholder"></div>
+                    <div id="attachments-placeholder"></div>
+                    <div id="events-placeholder"></div>
+                    <div id="easyadmin-placeholder"></div>
+                    <div id="cli-placeholder"></div>
+
+                    <div id="demo-controller-placeholder"></div>
+                    <div id="demo-subscriber-placeholder"></div>
+                    
+                    <div id="templates-placeholder"></div>
+
+                    <!-- Footer -->
+                    <div class="uk-text-center uk-margin-large-top uk-text-muted" style="border-top: 1px solid #e5e5e5; padding-top: 30px; padding-bottom: 50px;">
+                        <p style="font-size: 13px;">
+                            &copy; 2026 Callisto Mailer. Documentation built with <a href="https://getuikit.com" target="_blank" rel="noopener">UIkit</a>.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Offcanvas Mobile Sidebar -->
+        <div id="offcanvas-sidebar" uk-offcanvas="overlay: true; mode: slide">
+            <div class="uk-offcanvas-bar">
+                <button class="uk-offcanvas-close" type="button" uk-close></button>
+                <div class="uk-margin-medium-top">
+                    <a class="uk-logo" href="#">
+                        <strong>Callisto Mailer</strong>
+                    </a>
+                </div>
+                
+                <ul class="uk-nav uk-nav-default uk-margin-medium-top" uk-scrollspy-nav="closest: li; scroll: true; offset: 100">
+                    <li class="uk-nav-header">1. Getting Started</li>
+                    <li><a href="#intro" uk-toggle="target: #offcanvas-sidebar">Introduction</a></li>
+                    <li><a href="#installation" uk-toggle="target: #offcanvas-sidebar">Installation</a></li>
+                    <li><a href="#configuration" uk-toggle="target: #offcanvas-sidebar">Basic Configuration</a></li>
+                    <li><a href="#database" uk-toggle="target: #offcanvas-sidebar">Database</a></li>
+
+                    <li class="uk-nav-header">2. Core Features</li>
+                    <li><a href="#layouts" uk-toggle="target: #offcanvas-sidebar">Layouts</a></li>
+                    <li><a href="#entity" uk-toggle="target: #offcanvas-sidebar">MailTemplate Entity</a></li>
+                    <li><a href="#simple-send" uk-toggle="target: #offcanvas-sidebar">Simple Send</a></li>
+
+                    <li class="uk-nav-header">3. Advanced Features</li>
+                    <li><a href="#contract" uk-toggle="target: #offcanvas-sidebar">Variables Contract</a></li>
+                    <li><a href="#i18n" uk-toggle="target: #offcanvas-sidebar">Multi-language</a></li>
+                    <li><a href="#attachments" uk-toggle="target: #offcanvas-sidebar">Attachments</a></li>
+                    <li><a href="#events" uk-toggle="target: #offcanvas-sidebar">Events</a></li>
+                    <li><a href="#easyadmin" uk-toggle="target: #offcanvas-sidebar">EasyAdmin 4</a></li>
+                    <li><a href="#cli" uk-toggle="target: #offcanvas-sidebar">CLI Tools</a></li>
+
+                    <li class="uk-nav-header">4. Practical Cases</li>
+                    <li><a href="#demo-controller" uk-toggle="target: #offcanvas-sidebar">Symfony Controller</a></li>
+                    <li><a href="#demo-subscriber" uk-toggle="target: #offcanvas-sidebar">EventSubscriber</a></li>
+
+                    <li class="uk-nav-header">5. Email Templates</li>
+                    <li><a href="#templates-list" uk-toggle="target: #offcanvas-sidebar">10 Ready-to-use Templates</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORS Warning if file:// protocol -->
+    <div id="cors-warning" class="uk-container uk-container-small uk-margin-large-top" style="display: none;">
+        <div class="uk-alert-danger" uk-alert>
+            <h3>Local Loading Error (CORS)</h3>
+            <p>
+                The browser blocked loading local HTML documentation files due to CORS security restrictions associated with the <code>file://</code> protocol.
+            </p>
+            <p>
+                To view the site with its imported HTML sub-files, please start a simple local web server. For example, run the following command in the <code>/doc</code> directory:
+            </p>
+            <pre><code class="language-bash">php -S localhost:8000</code></pre>
+            <p>Then open <a href="http://localhost:8000" target="_blank">http://localhost:8000</a> in your browser.</p>
+        </div>
+    </div>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"></script>
+
+    <!-- Prism JS Autoloader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+    <!-- Import files logic -->
+    <script>
+        if (window.location.protocol === 'file:') {
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('cors-warning').style.display = 'block';
+        } else {
+            const files = [
+                { id: 'intro-placeholder', url: '_intro.html' },
+                { id: 'installation-placeholder', url: '_installation.html' },
+                { id: 'configuration-placeholder', url: '_configuration.html' },
+                { id: 'database-placeholder', url: '_database.html' },
+                { id: 'layouts-placeholder', url: '_layouts.html' },
+                { id: 'entity-placeholder', url: '_entity.html' },
+                { id: 'simple-send-placeholder', url: '_simple_send.html' },
+                { id: 'contract-placeholder', url: '_contract.html' },
+                { id: 'i18n-placeholder', url: '_i18n.html' },
+                { id: 'attachments-placeholder', url: '_attachments.html' },
+                { id: 'events-placeholder', url: '_events.html' },
+                { id: 'easyadmin-placeholder', url: '_easyadmin.html' },
+                { id: 'cli-placeholder', url: '_cli.html' },
+                { id: 'demo-controller-placeholder', url: '_demo_controller.html' },
+                { id: 'demo-subscriber-placeholder', url: '_demo_subscriber.html' },
+                { id: 'templates-placeholder', url: '_templates.html' }
+            ];
+
+            // Load all sections asynchronously
+            Promise.all(files.map(file => 
+                fetch(file.url)
+                    .then(response => {
+                        if (!response.ok) throw new Error("File not found: " + file.url);
+                        return response.text();
+                    })
+                    .then(html => {
+                        document.getElementById(file.id).innerHTML = html;
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        document.getElementById(file.id).innerHTML = `
+                            <div class="uk-alert-danger" uk-alert>
+                                <p>Error loading section <code>${file.url}</code>.</p>
+                            </div>`;
+                    })
+            )).then(() => {
+                // Trigger syntax highlighting once all DOM is loaded
+                Prism.highlightAll();
+
+                // Bind click event for copy buttons
+                initCopyButtons();
+
+                // Bind search filter event
+                initSearch();
+            });
+        }
+
+        function initCopyButtons() {
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
+                    const codeElement = document.getElementById(targetId.substring(1));
+                    if (!codeElement) return;
+                    
+                    const text = codeElement.innerText;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalHTML = button.innerHTML;
+                        button.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                        button.classList.add('uk-button-primary');
+                        button.classList.remove('uk-button-default');
+                        setTimeout(() => {
+                            button.innerHTML = originalHTML;
+                            button.classList.remove('uk-button-primary');
+                            button.classList.add('uk-button-default');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Copy error: ', err);
+                    });
+                });
+            });
+        }
+
+        function initSearch() {
+            const searchInput = document.getElementById('sidebar-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    const navLinks = document.querySelectorAll('.uk-nav li:not(.uk-nav-header)');
+                    const headers = document.querySelectorAll('.uk-nav li.uk-nav-header');
+
+                    navLinks.forEach(linkLi => {
+                        const linkText = linkLi.textContent.toLowerCase();
+                        if (linkText.includes(query)) {
+                            linkLi.style.display = '';
+                        } else {
+                            linkLi.style.display = 'none';
+                        }
+                    });
+
+                    headers.forEach(headerLi => {
+                        let nextSibling = headerLi.nextElementSibling;
+                        let hasVisibleChildren = false;
+                        while (nextSibling && !nextSibling.classList.contains('uk-nav-header')) {
+                            if (nextSibling.style.display !== 'none') {
+                                hasVisibleChildren = true;
+                                break;
+                            }
+                            nextSibling = nextSibling.nextElementSibling;
+                        }
+                        if (query !== '' && !hasVisibleChildren) {
+                            headerLi.style.display = 'none';
+                        } else {
+                            headerLi.style.display = '';
+                        }
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callisto SaaS Application Portal Simulator</title>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #f9fafb;
+            --border-color: #e5e7eb;
+            --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --accent-color: #4f46e5;
+            --success-color: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #374151;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .portal-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            height: 70px;
+        }
+
+        .portal-header .uk-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            color: #111827;
+        }
+
+        .portal-header .uk-navbar-nav > li > a {
+            color: #4b5563;
+            font-weight: 500;
+        }
+        .portal-header .uk-navbar-nav > li > a:hover,
+        .portal-header .uk-navbar-nav > li.uk-active > a {
+            color: var(--accent-color);
+        }
+
+        .portal-main {
+            padding: 40px 0;
+        }
+
+        /* UIkit overrides with rounded corners */
+        .premium-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+        }
+
+        .uk-input, .uk-select {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            height: 42px;
+            font-size: 14.5px;
+            transition: all 0.2s ease;
+        }
+
+        .uk-input:focus, .uk-select:focus {
+            border-color: var(--accent-color) !important;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .uk-button-primary {
+            background: var(--accent-gradient);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            height: 46px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+        }
+
+        .uk-button-primary:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+            transform: translateY(-1px);
+        }
+
+        .uk-button-default {
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .uk-button-default:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+
+        .uk-table th {
+            color: #374151;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+        }
+
+        .uk-table td {
+            color: #4b5563;
+            font-size: 14px;
+        }
+
+        .uk-label {
+            background-color: var(--accent-color);
+            border-radius: 6px;
+            font-weight: 600;
+            padding: 3px 8px;
+        }
+        
+        .uk-label-warning {
+            background-color: #f59e0b;
+        }
+
+        .uk-modal-dialog {
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        .gradient-text {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Elegant Toast Notification Style Overrides */
+        .uk-notification-message {
+            background: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            border-left: 4px solid var(--accent-color) !important;
+            border-radius: 10px !important;
+            padding: 16px 20px !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.03) !important;
+            color: #1f2937 !important;
+            font-size: 13.5px !important;
+            font-weight: 500 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px !important;
+        }
+        .uk-notification-message-success {
+            border-left-color: var(--success-color) !important;
+        }
+        .uk-notification-message-primary {
+            border-left-color: var(--accent-color) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="uk-navbar-container portal-header" uk-navbar>
+        <div class="uk-navbar-left uk-margin-medium-left">
+            <a class="uk-navbar-item uk-logo" href="#">
+                <i class="fa-solid fa-cloud-bolt uk-margin-small-right" style="color: var(--accent-color);"></i>
+                <span>Callisto <strong class="gradient-text">SaaS</strong></span>
+            </a>
+        </div>
+        <div class="uk-navbar-right uk-margin-medium-right">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active"><a href="#">Dashboard Space</a></li>
+                <li><a href="#"><i class="fa-regular fa-bell uk-margin-small-right"></i> Log Notifications</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="uk-container uk-container-medium portal-main">
+        <div uk-grid class="uk-grid-large">
+            
+            <!-- Profile Column / Form Simulator -->
+            <div class="uk-width-1-2@m">
+                <div class="premium-card">
+                    <h2 class="uk-h3 uk-text-bold uk-margin-remove-bottom">
+                        <i class="fa-solid fa-user-plus uk-margin-small-right" style="color: var(--accent-color);"></i> User Signup
+                    </h2>
+                    <p class="uk-text-meta uk-margin-small-top uk-margin-medium-bottom">Simulate triggering a SaaS registration API call that triggers an email via the mailer service.</p>
+                    
+                    <form class="uk-form-stacked" onsubmit="simulateRegistration(event)">
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-bold">First Name</label>
+                            <input class="uk-input" id="reg-firstname" type="text" value="Sophie" required>
+                        </div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-bold">Last Name</label>
+                            <input class="uk-input" id="reg-lastname" type="text" value="Martin" required>
+                        </div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-bold">Email Address</label>
+                            <input class="uk-input" id="reg-email" type="email" value="sophie.martin@example.com" required>
+                        </div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label uk-text-bold">Preferred Locale (i18n)</label>
+                            <select class="uk-select" id="reg-locale">
+                                <option value="fr">Français (fr)</option>
+                                <option value="en">English (en)</option>
+                            </select>
+                        </div>
+                        <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-top" type="submit">
+                            Create Account &amp; Send Email
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Email Audit Log Column Simulator -->
+            <div class="uk-width-1-2@m">
+                <div class="premium-card">
+                    <h2 class="uk-h3 uk-text-bold uk-margin-remove-bottom">
+                        <i class="fa-solid fa-clock-rotate-left uk-text-success uk-margin-small-right"></i> Sent Notifications
+                    </h2>
+                    <p class="uk-text-meta uk-margin-small-top uk-margin-medium-bottom">Audit logs captured via the bundle's <code>AfterTemplateMailSendEvent</code> dispatch hook.</p>
+                    
+                    <div class="uk-overflow-auto">
+                        <table class="uk-table uk-table-divider uk-table-middle uk-text-small">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Recipient</th>
+                                    <th>Subject</th>
+                                    <th>Sent At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-table-body">
+                                <tr>
+                                    <td><span class="uk-label uk-label-warning">password_reset</span></td>
+                                    <td><code>jean.dupont@...</code></td>
+                                    <td>Réinitialisation de mot de passe</td>
+                                    <td>2 hours ago</td>
+                                    <td><button class="uk-button uk-button-default uk-button-small" onclick="viewEmail('reset')">Preview</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="uk-label">welcome_user</span></td>
+                                    <td><code>jean.dupont@...</code></td>
+                                    <td>Bienvenue sur Callisto !</td>
+                                    <td>2 hours ago</td>
+                                    <td><button class="uk-button uk-button-default uk-button-small" onclick="viewEmail('welcome')">Preview</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal view template preview -->
+    <div id="modal-email-preview" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h2 class="uk-modal-title" id="preview-title">Sent Email Preview</h2>
+            <iframe id="preview-iframe" src="" style="width: 100%; height: 400px; border: 1px solid var(--border-color); border-radius: 8px;"></iframe>
+        </div>
+    </div>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"></script>
+
+    <script>
+        function simulateRegistration(e) {
+            e.preventDefault();
+            const firstname = document.getElementById('reg-firstname').value;
+            const lastname = document.getElementById('reg-lastname').value;
+            const email = document.getElementById('reg-email').value;
+            const locale = document.getElementById('reg-locale').value;
+
+            UIkit.notification({
+                message: `<i class="fa-solid fa-spinner fa-spin uk-text-primary"></i> <div>Creating user record in database...</div>`, 
+                status: 'primary'
+            });
+
+            setTimeout(() => {
+                UIkit.notification({
+                    message: `<i class="fa-solid fa-gears uk-text-primary"></i> <div>User created! Dispatching DatabaseMailerService::send...</div>`, 
+                    status: 'primary'
+                });
+                
+                setTimeout(() => {
+                    UIkit.notification({
+                        message: `<i class="fa-solid fa-envelope-circle-check uk-text-success"></i> <div>Email sent successfully & audited by EmailAuditSubscriber!</div>`, 
+                        status: 'success'
+                    });
+
+                    const tbody = document.getElementById('log-table-body');
+                    const newRow = document.createElement('tr');
+                    
+                    const subject = locale === 'fr' 
+                        ? `Bienvenue sur Callisto, ${firstname} !` 
+                        : `Welcome to Callisto, ${firstname}!`;
+
+                    newRow.innerHTML = `
+                        <td><span class="uk-label">welcome_user</span></td>
+                        <td><code>${email.substring(0, 12)}...</code></td>
+                        <td>${subject}</td>
+                        <td>Just now</td>
+                        <td><button class="uk-button uk-button-default uk-button-small" onclick="viewEmail('welcome')">Preview</button></td>
+                    `;
+                    tbody.insertBefore(newRow, tbody.firstChild);
+
+                }, 1200);
+            }, 1200);
+        }
+
+        function viewEmail(type) {
+            const iframe = document.getElementById('preview-iframe');
+            const title = document.getElementById('preview-title');
+            
+            if (type === 'welcome') {
+                iframe.src = 'welcome_email.html';
+                title.innerText = "Sent Email Preview: Welcome to Callisto";
+            } else {
+                iframe.src = 'reset_password_email.html';
+                title.innerText = "Sent Email Preview: Password Reset Link";
+            }
+            
+            UIkit.modal('#modal-email-preview').show();
+        }
+    </script>
+</body>
+</html>

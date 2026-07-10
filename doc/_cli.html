@@ -1,0 +1,21 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="cli">
+    <h2>CLI Tools</h2>
+    
+    <h3>1. Test Email Sending</h3>
+    <p>
+        This command parses the contract, automatically creates fake mock variables context matching the schema, and fires the email to test rendering and deliverability:
+    </p>
+    <div class="code-container uk-margin-small-bottom">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-cli-test"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-bash" id="code-cli-test">php bin/console callisto:mailer:test-send welcome_user en test@example.com</code></pre>
+    </div>
+
+    <h3>2. Synchronize Twig Templates to Database</h3>
+    <p>
+        Extract email blocks (subject, layout, content) written as raw physical Twig files in your IDE and sync them to your database:
+    </p>
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-cli-import"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-bash" id="code-cli-import">php bin/console callisto:mailer:import-templates templates/emails/</code></pre>
+    </div>
+</div>

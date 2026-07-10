@@ -1,0 +1,25 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="attachments">
+    <h2>Attachments</h2>
+    <p>
+        The <code>$attachments</code> argument accepts an array containing:
+    </p>
+    <ul>
+        <li>Absolute physical file paths as strings.</li>
+        <li>Instances of <code>Symfony\Component\Mime\Part\DataPart</code> for dynamically generated files.</li>
+    </ul>
+
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-attachments"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-php" id="code-attachments">use Symfony\Component\Mime\Part\DataPart;
+
+$databaseMailerService->send(
+    code: 'invoice_template',
+    recipient: 'client@example.com',
+    context: ['order' => $order],
+    attachments: [
+        '/var/www/app/public/pdf/invoice-123.pdf', // Physical file path
+        new DataPart($csvContent, 'report.csv', 'text/csv') // Dynamic content
+    ]
+);</code></pre>
+    </div>
+</div>

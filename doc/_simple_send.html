@@ -1,0 +1,28 @@
+<div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom" id="simple-send">
+    <h2>Simple Send (Service)</h2>
+    <p>
+        Inject the <code>DatabaseMailerService</code> service and call its <code>send()</code> method:
+    </p>
+
+    <div class="code-container">
+        <button class="uk-button uk-button-default uk-button-small copy-btn" data-target="#code-send"><i class="fa-regular fa-copy"></i> Copy</button>
+        <pre><code class="language-php" id="code-send">use Callisto\CallistoMailer\Service\DatabaseMailerService;
+
+class RegistrationController extends AbstractController
+{
+    public function index(DatabaseMailerService $mailer): Response
+    {
+        $mailer->send(
+            code: 'welcome_user',
+            recipient: 'sophie.martin@example.com',
+            context: [
+                'user' => ['firstName' => 'Sophie', 'lastName' => 'Martin'],
+                'loginUrl' => 'https://app.example.com/login'
+            ]
+        );
+        
+        return new Response("Email sent successfully!");
+    }
+}</code></pre>
+    </div>
+</div>
