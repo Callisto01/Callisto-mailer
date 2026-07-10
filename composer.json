@@ -1,8 +1,8 @@
 {
     "name": "callisto/callisto-mailer",
-    "description": "A private Symfony bundle to manage and send emails dynamically using database-stored templates and premium layouts.",
+    "description": "A Symfony bundle to manage and send emails dynamically using database-stored templates and premium layouts.",
     "type": "symfony-bundle",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Callisto Team",

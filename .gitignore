@@ -1,3 +1,18 @@
-/.idea
-/.idea/*
+# Dependencies
 /vendor/
+
+# Configuration and Env files
+.env.local
+.env.local.php
+.env.*.local
+
+# Testing
+/.phpunit.cache/
+/.phpunit.result.cache
+/phpunit.xml
+
+# IDEs and System files
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
