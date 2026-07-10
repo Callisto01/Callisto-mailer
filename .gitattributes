@@ -1,0 +1,14 @@
+# Exclude development, testing, and documentation files from the Composer package archive
+
+# Documentation
+/doc/ export-ignore
+
+# Testing & Examples
+/tests/ export-ignore
+/example/ export-ignore
+/phpunit.xml.dist export-ignore
+
+# Git & Tooling configurations
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/composer.lock export-ignore
