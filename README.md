@@ -14,24 +14,8 @@ The **Callisto Mailer** bundle is a modern Symfony 8 extension allowing you to s
 
 ## Installation
 
-### 1. Add private repository to project `composer.json`
-Since this is a private package, you must declare its location (for example, a Git repository) in your main application's `composer.json`:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:your-organization/callisto-mailer.git"
-        }
-    ],
-    "require": {
-        "callisto/callisto-mailer": "dev-main"
-    }
-}
-```
-
-Then run the installation:
+### 1. Run Composer Require
+You can install the package directly via Composer:
 ```bash
 composer require callisto/callisto-mailer
 ```
