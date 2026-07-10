@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject|default('') }}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            text-size-adjust: 100%;
+        }
+        table {
+            border-collapse: separate;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+            width: 100%;
+        }
+        td {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 16px;
+            vertical-align: top;
+            color: #334155;
+            line-height: 1.625;
+        }
+        a {
+            color: #4f46e5;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #3730a3;
+        }
+        .btn-indigo {
+            background-color: #4f46e5;
+            border: solid 1px #4f46e5;
+            border-radius: 0.5rem;
+            color: #ffffff !important;
+            display: inline-block;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.5;
+            padding: 0.625rem 1.25rem;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-indigo:hover {
+            background-color: #4338ca;
+            border-color: #4338ca;
+        }
+    </style>
+</head>
+<body style="background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0;">
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; width: 100%;">
+        <tr>
+            <td>&nbsp;</td>
+            <td class="container" style="display: block; margin: 0 auto !important; max-width: 600px; padding: 24px; width: 600px;">
+                <div class="content" style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 600px; padding: 8px;">
+                    
+                    <!-- Header -->
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 24px; width: 100%;">
+                        <tr>
+                            <td align="center" style="padding: 8px 0;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <!-- Sleek Indigo Icon Dot -->
+                                        <td style="background-color: #4f46e5; border-radius: 50%; height: 32px; width: 32px; text-align: center; vertical-align: middle; padding: 0; display: inline-block;">
+                                            <span style="color: #ffffff; font-size: 16px; font-weight: 800; line-height: 32px;">C</span>
+                                        </td>
+                                        <td style="padding-left: 10px; vertical-align: middle;">
+                                            <span style="font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.025em;">Callisto</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Main Content Card -->
+                    <table role="presentation" class="main" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; width: 100%; border-spacing: 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
+                        <tr>
+                            <td class="wrapper" style="box-sizing: border-box; padding: 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <tr>
+                                        <td>
+                                            <!-- Content dynamically compiled from database template -->
+                                            {{ content|raw }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Footer -->
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin-top: 24px; width: 100%;">
+                        <tr>
+                            <td align="center" style="color: #64748b; font-size: 13px; padding: 8px 0; text-align: center; line-height: 1.6;">
+                                <p style="margin: 0 0 8px 0; font-weight: 500;">© {{ "now"|date("Y") }} Callisto. Tous droits réservés.</p>
+                                <p style="margin: 0; font-size: 12px; color: #94a3b8;">Cet e-mail est généré automatiquement. Merci de ne pas y répondre directement.</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</body>
+</html>
